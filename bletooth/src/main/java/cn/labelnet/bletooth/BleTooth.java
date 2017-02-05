@@ -26,6 +26,7 @@ public class BleTooth {
     private static final String TAG = BleTooth.class.getSimpleName();
 
     private Context mContext;
+
     //bluetooth
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothManager mBluetoothManager;
@@ -51,17 +52,27 @@ public class BleTooth {
 
     }
 
-
     /**
      * start scan
      *
      * @param callback LeCallback
      */
     public void startScan(BleToothScanCallback callback) {
-        callback.onStartScan();
-//        mBluetoothAdapter.startLeScan()
-//        mBluetoothAdapter.startScan()
-//        Build.VERSION_CODES
+        boolean startResult = mBluetoothAdapter.startLeScan(callback);
+        if (startResult) {
+            callback.onStartTimmer();
+        } else {
+            callback.onStopTimmer();
+        }
+    }
+
+    /**
+     * stop scan
+     * @param callback
+     */
+    public void stopScan(BleToothScanCallback callback){
+        callback.onStopTimmer();
+        mBluetoothAdapter.stopLeScan(callback);
     }
 
 

@@ -1,4 +1,4 @@
-package cn.labelnet.bletooth.util;
+package cn.labelnet.util;
 
 import android.text.TextUtils;
 import android.util.Log;

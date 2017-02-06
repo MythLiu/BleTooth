@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.labelnet.bletooth.ble.BleBlueTooth;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onScanDevicesData(List<BleDevice> bleDevices) {
+            LogUtil.v("=================================================== BleDevices : " + bleDevices);
         }
 
         @Override
@@ -62,6 +64,13 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void bleToothScanProcess(float process) {
             LogUtil.v("Process : " + process);
+        }
+
+        @Override
+        protected List<String> getScanFilter() {
+            List<String> filterList = new ArrayList<>();
+            filterList.add("CC2650");
+            return filterList;
         }
     }
 

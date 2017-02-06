@@ -1,12 +1,15 @@
 package cn.labelnet.bletooth.ble;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import cn.labelnet.bletooth.ble.bean.BleDevice;
+import cn.labelnet.bletooth.ble.conn.BleToothBleGattCallBack;
 import cn.labelnet.bletooth.ble.scan.BleToothBleScanCallback;
 import cn.labelnet.bletooth.util.LogUtil;
 
@@ -66,6 +69,7 @@ public class BleBlueTooth {
 
     }
 
+    //==================================== SCAN ===================================================
     /**
      * start scan
      *
@@ -96,5 +100,25 @@ public class BleBlueTooth {
         mBluetoothAdapter.stopLeScan(callback);
     }
 
+    //==================================== CONN ===================================================
+
+    /**
+     * conn blue
+     *
+     * @param bleDevice             chip bean
+     * @param isAutoConn            isAuto
+     * @param bluetoothGattCallback callback
+     */
+    public void connect(BleDevice bleDevice, boolean isAutoConn, BleToothBleGattCallBack bluetoothGattCallback) {
+        if (bleDevice == null) {
+            throw new IllegalArgumentException("BleDevice Bean is null!");
+        }
+
+        if (bluetoothGattCallback == null) {
+            throw new IllegalArgumentException("BleToothBleGattCallBack is null!");
+        }
+        BluetoothDevice bluetoothDevice = bleDevice.getBluetoothDevice();
+        mBluetoothGatt = bluetoothDevice.connectGatt(mContext, isAutoConn, bluetoothGattCallback);
+    }
 
 }

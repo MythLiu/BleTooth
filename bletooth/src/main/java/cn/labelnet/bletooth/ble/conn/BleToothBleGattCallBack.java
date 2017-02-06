@@ -3,6 +3,8 @@ package cn.labelnet.bletooth.ble.conn;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 
+import cn.labelnet.bletooth.util.LogUtil;
+
 /**
  * @Package cn.labelnet.bletooth.ble.conn
  * <p>
@@ -11,17 +13,34 @@ import android.bluetooth.BluetoothGattCallback;
  * <p>
  * @Date Created in 4:08 PM 2/6/2017
  * @Desc Desc
+ * conn bluetooth call back
+ * (1)conn status
+ * (2)control
  */
 
 public abstract class BleToothBleGattCallBack extends BluetoothGattCallback {
 
+    private OnConnStatusListener onConnStatusListener;
+
+    public void setOnConnStatusListener(OnConnStatusListener onConnStatusListener) {
+        this.onConnStatusListener = onConnStatusListener;
+    }
+
     @Override
     public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+        LogUtil.v("Status : " + status + "　NewState : " + newState);
+
+        if (status == 133 && newState == 0) {
+            setBleConnStatus(BleConnStatus.conntimeout);
+            onConnStatusListener.onCloseConn();
+            return;
+        }
         if (newState == BluetoothGatt.STATE_CONNECTED) {
             setBleConnStatus(BleConnStatus.success);
+            onConnStatusListener.onSuccess();
             gatt.discoverServices();
         } else if (newState == BluetoothGatt.STATE_DISCONNECTED) {
-            setBleConnStatus(BleConnStatus.fail);
+            onConnStatusListener.onFail();
         } else if (newState == BluetoothGatt.STATE_CONNECTING) {
             setBleConnStatus(BleConnStatus.conning);
         } else if (newState == BluetoothGatt.STATE_DISCONNECTING) {
@@ -38,6 +57,16 @@ public abstract class BleToothBleGattCallBack extends BluetoothGattCallback {
         }
     }
 
-    protected abstract void setBleConnStatus(BleConnStatus status);
+    public abstract void setBleConnStatus(BleConnStatus status);
+
+    //conn listener
+    public interface OnConnStatusListener {
+
+        void onFail();
+
+        void onSuccess();
+
+        void onCloseConn();
+    }
 
 }

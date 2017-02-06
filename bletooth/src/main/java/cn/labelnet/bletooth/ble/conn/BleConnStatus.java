@@ -12,5 +12,5 @@ package cn.labelnet.bletooth.ble.conn;
  */
 
 public enum  BleConnStatus {
-    success,fail,conning,disconning,gatt_success,gatt_fail
+    conntimeout,success,fail,conning,disconning,gatt_success,gatt_fail
 }

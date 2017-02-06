@@ -28,7 +28,7 @@ public abstract class BleScanResultCallback extends BleToothBleScanCallback {
         bleDevices = new ArrayList<>();
     }
 
-    private void addDevice(BleDevice bleDevice, int rssi) {
+    protected void addDevice(BleDevice bleDevice, int rssi) {
         if (bleDevices.contains(bleDevice)) {
             int position = bleDevices.indexOf(bleDevice);
             onNotifyBleToothDeviceRssi(position, rssi);

@@ -24,7 +24,7 @@ public abstract class BleScanResultCallback extends BleToothBleScanCallback {
     private List<BleDevice> bleDevices;
 
     public BleScanResultCallback(long timeOutMillis) {
-        setTimeOutMillis(timeOutMillis);
+        super(timeOutMillis);
         bleDevices = new ArrayList<>();
     }
 
@@ -44,8 +44,17 @@ public abstract class BleScanResultCallback extends BleToothBleScanCallback {
         LogUtil.v("Name : " + device.getName() + " | MAC : "+device.getAddress() + " | RSSI　：　" + rssi);
     }
 
-    @Override
     public List<BleDevice> getBleDevices() {
         return bleDevices;
     }
+
+    @Override
+    protected void onScanFinish() {
+
+        onScanComplete(getBleDevices());
+    }
+
+    // scan complete
+    protected abstract void onScanComplete(List<BleDevice> bleDevices);
+
 }

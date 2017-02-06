@@ -10,7 +10,7 @@ import cn.labelnet.bletooth.ble.BleBlueTooth;
 import cn.labelnet.bletooth.ble.bean.BleDevice;
 import cn.labelnet.bletooth.ble.scan.BleScanResultCallback;
 import cn.labelnet.bletooth.ble.scan.BleScanStatus;
-import cn.labelnet.util.LogUtil;
+import cn.labelnet.bletooth.util.LogUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         bleTooth = new BleBlueTooth(getApplicationContext());
-        callBack = new ScanCallBack(10000);
+        callBack = new ScanCallBack(2000);
 
         findViewById(R.id.btn_start).setOnClickListener(new View.OnClickListener() {
             @Override

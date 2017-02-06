@@ -8,9 +8,10 @@ import android.os.Handler;
 import android.os.Looper;
 
 import cn.labelnet.bletooth.ble.scan.BleToothBleScanCallback;
+import cn.labelnet.bletooth.util.LogUtil;
 
 /**
- * @Package cn.labelnet.bletooth
+ * @Package cn.labelnet.bletooth.ble
  * <p>
  * @Author yuan
  * @Blog http://blog.csdn.net/lablenet
@@ -35,6 +36,19 @@ public class BleBlueTooth {
     //control
     private Handler handler = new Handler(Looper.getMainLooper());
 
+    private static BleBlueTooth mInstance;
+
+    public static BleBlueTooth getInstance(Context context) {
+        if (mInstance == null) {
+            synchronized (BleBlueTooth.class) {
+                if (mInstance == null) {
+                    mInstance = new BleBlueTooth(context);
+                }
+            }
+        }
+        return mInstance;
+    }
+
 
     /**
      * init bluetooth
@@ -57,12 +71,19 @@ public class BleBlueTooth {
      *
      * @param callback LeCallback
      */
-    public void startScan(BleToothBleScanCallback callback) {
+    public void startScan(final BleToothBleScanCallback callback) {
         boolean startResult = mBluetoothAdapter.startLeScan(callback);
         if (startResult) {
+            callback.setOnScanCompleteListener(new BleToothBleScanCallback.OnScanCompleteListener() {
+                @Override
+                public void onScanFinish() {
+                    LogUtil.v("Over Scan Finish !");
+                    stopScan(callback);
+                }
+            });
             callback.onStartTimmer();
         } else {
-            callback.onStopTimmer();
+            stopScan(callback);
         }
     }
 
@@ -70,7 +91,7 @@ public class BleBlueTooth {
      * stop scan
      * @param callback
      */
-    public void stopScan(BleToothBleScanCallback callback){
+    public void stopScan(BleToothBleScanCallback callback) {
         callback.onStopTimmer();
         mBluetoothAdapter.stopLeScan(callback);
     }

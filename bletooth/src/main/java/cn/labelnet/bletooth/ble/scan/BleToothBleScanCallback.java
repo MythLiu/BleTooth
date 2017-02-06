@@ -2,9 +2,8 @@ package cn.labelnet.bletooth.ble.scan;
 
 import android.bluetooth.BluetoothAdapter;
 import android.os.CountDownTimer;
-import java.util.List;
-import cn.labelnet.bletooth.ble.bean.BleDevice;
-import cn.labelnet.bletooth.util.LogUtil;
+
+import cn.labelnet.bletooth.exception.ScanTimeOutException;
 
 
 /**
@@ -24,35 +23,53 @@ public abstract class BleToothBleScanCallback implements BluetoothAdapter.LeScan
 
     private static final String TAG = BleToothBleScanCallback.class.getSimpleName();
     //timeout millis
-    private long timeOutMillis = 3000;
-    private long timeInterval = 100;
-
-    public void setTimeOutMillis(long timeOutMillis) {
-        this.timeOutMillis = timeOutMillis;
-    }
+    private long timeOutMillis = 5000;
+    private long timeInterval = 200;
 
     //timer
-    private CountDownTimer countDownTimer = new CountDownTimer(timeOutMillis, timeInterval) {
+    private CountDownTimer countDownTimer;
 
-        @Override
-        public void onTick(long millisUntilFinished) {
-            float process = (float) ((timeOutMillis - millisUntilFinished) / (timeOutMillis * 1.0));
-            LogUtil.v(TAG, "scan millis : " + millisUntilFinished);
-            LogUtil.v(TAG, "scan process : " + process);
-            bleToothScanProcess(process);
+
+    public BleToothBleScanCallback(long timeOutMill) {
+
+        if (timeOutMill >= 3000) {
+            this.timeOutMillis = timeOutMill;
+        } else {
+            try {
+                throw new ScanTimeOutException("Timeout set at least 3S !");
+            } catch (ScanTimeOutException e) {
+                e.printStackTrace();
+            }
         }
 
-        @Override
-        public void onFinish() {
-            onScanComplete(getBleDevices());
-        }
-    };
+        countDownTimer = new CountDownTimer(timeOutMillis, timeInterval) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                float process = (float) ((timeOutMillis - millisUntilFinished) / (timeOutMillis * 1.0));
+                if (process > 0.9) {
+                    process = 1.0f;
+                }
+                bleToothScanProcess(process);
+            }
 
-    // scan device info
-    protected abstract List<BleDevice> getBleDevices();
+            @Override
+            public void onFinish() {
+                onScanFinish();
+                onScanCompleteListener.onScanFinish();
+            }
+        };
 
-    // scan complete
-    protected abstract void onScanComplete(List<BleDevice> bleDevices);
+    }
+
+
+    //scan listener
+    private OnScanCompleteListener onScanCompleteListener;
+
+    public void setOnScanCompleteListener(OnScanCompleteListener onScanCompleteListener) {
+        this.onScanCompleteListener = onScanCompleteListener;
+    }
+
+    protected abstract void onScanFinish();
 
     //start scan
     public void onStartTimmer() {
@@ -70,5 +87,9 @@ public abstract class BleToothBleScanCallback implements BluetoothAdapter.LeScan
 
     //scan process
     protected abstract void bleToothScanProcess(float process);
+
+    public interface OnScanCompleteListener {
+        void onScanFinish();
+    }
 
 }

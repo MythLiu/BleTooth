@@ -31,8 +31,7 @@ public abstract class BleToothBleGattCallBack extends BluetoothGattCallback {
         LogUtil.v("Status : " + status + "　NewState : " + newState);
 
         if (status == 133 && newState == 0) {
-            setBleConnStatus(BleConnStatus.conntimeout);
-            onConnStatusListener.onCloseConn();
+            onConnStatusListener.onTimeOut();
             return;
         }
         if (newState == BluetoothGatt.STATE_CONNECTED) {
@@ -66,7 +65,7 @@ public abstract class BleToothBleGattCallBack extends BluetoothGattCallback {
 
         void onSuccess();
 
-        void onCloseConn();
+        void onTimeOut();
     }
 
 }

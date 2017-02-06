@@ -42,7 +42,6 @@ public class BleBlueTooth {
 
     //control
     private Handler handler = new Handler(Looper.getMainLooper());
-    private int connCount = 0;
 
     private static BleBlueTooth mInstance;
 
@@ -127,6 +126,10 @@ public class BleBlueTooth {
         this.mBlueToothDevice = bleDevice.getBluetoothDevice();
 
         bluetoothGattCallback.setOnConnStatusListener(new BleToothBleGattCallBack.OnConnStatusListener() {
+
+            private int connCount = 0;
+            private int timeOutCount = 0;
+
             @Override
             public void onFail() {
                 connCount++;
@@ -140,12 +143,20 @@ public class BleBlueTooth {
             @Override
             public void onSuccess() {
                 connCount = 0;
+                timeOutCount = 0;
             }
 
             @Override
-            public void onCloseConn() {
-               ClsBleUtil.cancelBondProcess(mBlueToothDevice);
+            public void onTimeOut() {
+                timeOutCount++;
+                if (timeOutCount == 5) {
+                    bluetoothGattCallback.setBleConnStatus(BleConnStatus.conntimeout);
+                    ClsBleUtil.cancelBondProcess(mBlueToothDevice);
+                    return;
+                }
+                connect(bleDevice, isAutoConn, bluetoothGattCallback);
             }
+
         });
         mBluetoothGatt = mBlueToothDevice.connectGatt(mContext, isAutoConn, bluetoothGattCallback);
     }

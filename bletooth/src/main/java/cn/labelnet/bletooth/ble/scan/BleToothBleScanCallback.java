@@ -54,7 +54,6 @@ public abstract class BleToothBleScanCallback implements BluetoothAdapter.LeScan
 
             @Override
             public void onFinish() {
-                onScanFinish();
                 onScanCompleteListener.onScanFinish();
             }
         };
@@ -69,17 +68,21 @@ public abstract class BleToothBleScanCallback implements BluetoothAdapter.LeScan
         this.onScanCompleteListener = onScanCompleteListener;
     }
 
+    protected abstract void onScanStart();
     protected abstract void onScanFinish();
 
     //start scan
     public void onStartTimmer() {
         countDownTimer.start();
         setBleToothScanStatus(BleScanStatus.scaning);
+        onScanStart();
     }
+
+
     //stop scan
     public void onStopTimmer() {
         countDownTimer.cancel();
-        setBleToothScanStatus(BleScanStatus.disscan);
+        onScanFinish();
     }
 
     //scan status

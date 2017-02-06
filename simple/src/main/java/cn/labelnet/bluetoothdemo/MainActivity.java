@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         bleTooth = new BleBlueTooth(getApplicationContext());
-        callBack = new ScanCallBack(2000);
+        callBack = new ScanCallBack(5000);
 
         findViewById(R.id.btn_start).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,12 +47,11 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onNotifyBleToothDeviceRssi(int position, int rssi) {
-
+            LogUtil.v("----------------------------------------------------Position : " + position + " Rssi : " + rssi);
         }
 
         @Override
-        protected void onScanComplete(List<BleDevice> bleDevices) {
-
+        protected void onScanDevicesData(List<BleDevice> bleDevices) {
         }
 
         @Override

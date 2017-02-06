@@ -28,12 +28,14 @@ public abstract class BleScanResultCallback extends BleToothBleScanCallback {
         bleDevices = new ArrayList<>();
     }
 
-    public void addDevice() {
-        //filter
-    }
-
-    public void notifyRssi() {
-        onNotifyBleToothDeviceRssi(1, 122);
+    private void addDevice(BleDevice bleDevice, int rssi) {
+        if (bleDevices.contains(bleDevice)) {
+            int position = bleDevices.indexOf(bleDevice);
+            onNotifyBleToothDeviceRssi(position, rssi);
+            return;
+        }
+        bleDevices.add(bleDevice);
+        onScanDevicesData(bleDevices);
     }
 
 
@@ -42,19 +44,69 @@ public abstract class BleScanResultCallback extends BleToothBleScanCallback {
     @Override
     public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
         LogUtil.v("Name : " + device.getName() + " | MAC : "+device.getAddress() + " | RSSI　：　" + rssi);
+        String deviceName = device.getName();
+        String deviceMac = device.getAddress();
+        if (deviceName != null && deviceName.trim().length() > 0) {
+            //chip Name can use !
+            if (isScanDeviceNameFilter(deviceName)) {
+                BleDevice bleDevice = new BleDevice();
+                bleDevice.setBluetoothDevice(device);
+                bleDevice.setDeviceName(deviceName);
+                bleDevice.setDeviceMac(deviceMac);
+                bleDevice.setRssi(rssi);
+                addDevice(bleDevice, rssi);
+            }
+
+        }
     }
 
-    public List<BleDevice> getBleDevices() {
-        return bleDevices;
+    /**
+     * filter
+     *
+     * @param deviceName chip Name
+     * @return is need chip Name
+     */
+    private boolean isScanDeviceNameFilter(String deviceName) {
+        List<String> scanFilter = getScanFilter();
+
+        // no filter
+        if (scanFilter == null || scanFilter.size() == 0) {
+            return true;
+        }
+
+        // have filter
+        for (String filter : scanFilter) {
+            if (deviceName.startsWith(filter) || deviceName.endsWith(filter) || deviceName.contains(filter)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     protected void onScanFinish() {
-
-        onScanComplete(getBleDevices());
+        if (bleDevices.size() == 0) {
+            setBleToothScanStatus(BleScanStatus.timeout);
+            return;
+        }
+        setBleToothScanStatus(BleScanStatus.disscan);
     }
 
-    // scan complete
-    protected abstract void onScanComplete(List<BleDevice> bleDevices);
+    @Override
+    protected void onScanStart() {
+        onScanDevicesData(bleDevices);
+    }
+
+    /**
+     * devices info filter
+     *
+     * @return filter
+     */
+    protected List<String> getScanFilter() {
+        return null;
+    }
+
+    // scan result
+    protected abstract void onScanDevicesData(List<BleDevice> bleDevices);
 
 }

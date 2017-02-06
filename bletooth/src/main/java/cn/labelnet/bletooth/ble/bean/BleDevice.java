@@ -1,7 +1,7 @@
-package cn.labelnet.bletooth.bean;
+package cn.labelnet.bletooth.ble.bean;
 
 /**
- * @Package cn.labelnet.bletooth.bean
+ * @Package cn.labelnet.bletooth.ble.bean
  * <p>
  * @Author yuan
  * @Blog http://blog.csdn.net/lablenet

@@ -1,15 +1,15 @@
-package cn.labelnet.bletooth.scan;
+package cn.labelnet.bletooth.ble.scan;
 
 import android.bluetooth.BluetoothDevice;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.labelnet.bletooth.bean.BleDevice;
-import cn.labelnet.util.LogUtil;
+import cn.labelnet.bletooth.ble.bean.BleDevice;
+import cn.labelnet.bletooth.util.LogUtil;
 
 /**
- * @Package cn.labelnet.bletooth.scan
+ * @Package cn.labelnet.bletooth.ble.scan
  * <p>
  * @Author yuan
  * @Blog http://blog.csdn.net/lablenet
@@ -19,11 +19,11 @@ import cn.labelnet.util.LogUtil;
  * (2) scan filter
  */
 
-public abstract class ScanResultCallback extends BleToothScanCallback {
+public abstract class BleScanResultCallback extends BleToothBleScanCallback {
 
     private List<BleDevice> bleDevices;
 
-    public ScanResultCallback(long timeOutMillis) {
+    public BleScanResultCallback(long timeOutMillis) {
         setTimeOutMillis(timeOutMillis);
         bleDevices = new ArrayList<>();
     }

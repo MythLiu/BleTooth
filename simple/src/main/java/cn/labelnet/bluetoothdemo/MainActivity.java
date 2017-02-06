@@ -6,22 +6,22 @@ import android.view.View;
 
 import java.util.List;
 
-import cn.labelnet.bletooth.BleTooth;
-import cn.labelnet.bletooth.bean.BleDevice;
-import cn.labelnet.bletooth.scan.ScanResultCallback;
-import cn.labelnet.bletooth.scan.ScanStatus;
+import cn.labelnet.bletooth.ble.BleBlueTooth;
+import cn.labelnet.bletooth.ble.bean.BleDevice;
+import cn.labelnet.bletooth.ble.scan.BleScanResultCallback;
+import cn.labelnet.bletooth.ble.scan.BleScanStatus;
 import cn.labelnet.util.LogUtil;
 
 public class MainActivity extends AppCompatActivity {
 
-    private BleTooth bleTooth;
+    private BleBlueTooth bleTooth;
     private ScanCallBack callBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        bleTooth = new BleTooth(getApplicationContext());
+        bleTooth = new BleBlueTooth(getApplicationContext());
         callBack = new ScanCallBack(10000);
 
         findViewById(R.id.btn_start).setOnClickListener(new View.OnClickListener() {
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private static class ScanCallBack extends ScanResultCallback {
+    private static class ScanCallBack extends BleScanResultCallback {
 
         public ScanCallBack(long timeOutMillis) {
             super(timeOutMillis);
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void setBleToothScanStatus(ScanStatus status) {
+        public void setBleToothScanStatus(BleScanStatus status) {
             LogUtil.v("当前状态 ： " + status);
         }
 

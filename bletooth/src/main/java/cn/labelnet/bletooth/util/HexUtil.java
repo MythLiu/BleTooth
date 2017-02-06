@@ -1,4 +1,4 @@
-package cn.labelnet.util;
+package cn.labelnet.bletooth.util;
 
 /**
  * @Package cn.labelnet.bletooth.util

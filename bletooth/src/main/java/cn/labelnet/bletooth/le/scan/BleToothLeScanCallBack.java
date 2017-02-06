@@ -1,11 +1,11 @@
-package cn.labelnet.letooth.scan;
+package cn.labelnet.bletooth.le.scan;
 
 import android.annotation.TargetApi;
 import android.bluetooth.le.ScanCallback;
 import android.os.Build;
 
 /**
- * @Package cn.labelnet.letooth.scan
+ * @Package cn.labelnet.bletooth.le.scan
  * <p>
  * @Author yuan
  * @Blog http://blog.csdn.net/lablenet

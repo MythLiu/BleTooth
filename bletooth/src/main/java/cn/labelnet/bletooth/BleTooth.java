@@ -1,79 +1,27 @@
 package cn.labelnet.bletooth;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothManager;
-import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
-
-import cn.labelnet.bletooth.scan.BleToothScanCallback;
+import android.os.Build;
 
 /**
- * @Package cn.labelnet.bletooth
+ * @Package cn.labelnet
  * <p>
  * @Author yuan
  * @Blog http://blog.csdn.net/lablenet
  * <p>
- * @Date Created in 3:27 PM 2/5/2017
- * @Desc BleTooth
- * (1) 只允许一个BluetoothGattCallback
- * (2)
+ * @Date Created in 5:58 PM 2/5/2017
+ * @Desc bletooth 包下为4.3 ~ 5.0
+ * letooth 包下为 >= 5.0
  */
 
 public class BleTooth {
 
-    private static final String TAG = BleTooth.class.getSimpleName();
-
-    private Context mContext;
-
-    //bluetooth
-    private BluetoothAdapter mBluetoothAdapter;
-    private BluetoothManager mBluetoothManager;
-    private BluetoothGatt mBluetoothGatt;
-
-    //control
-    private Handler handler = new Handler(Looper.getMainLooper());
-
-
     /**
-     * init bluetooth
+     * support Android L 5.0
      *
-     * @param context Application Context
+     * @return is support package android.bluetooth.le
      */
-    public BleTooth(Context context) {
-        this.mContext = context.getApplicationContext();
-        initBlueTooth();
+    private boolean isBuildLOLLIPOP() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
-
-    private void initBlueTooth() {
-        mBluetoothManager = (BluetoothManager) mContext.getSystemService(Context.BLUETOOTH_SERVICE);
-        mBluetoothAdapter = mBluetoothManager.getAdapter();
-
-    }
-
-    /**
-     * start scan
-     *
-     * @param callback LeCallback
-     */
-    public void startScan(BleToothScanCallback callback) {
-        boolean startResult = mBluetoothAdapter.startLeScan(callback);
-        if (startResult) {
-            callback.onStartTimmer();
-        } else {
-            callback.onStopTimmer();
-        }
-    }
-
-    /**
-     * stop scan
-     * @param callback
-     */
-    public void stopScan(BleToothScanCallback callback){
-        callback.onStopTimmer();
-        mBluetoothAdapter.stopLeScan(callback);
-    }
-
 
 }

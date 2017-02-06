@@ -1,7 +1,7 @@
-package cn.labelnet.bletooth.scan;
+package cn.labelnet.bletooth.ble.scan;
 
 /**
- * @Package cn.labelnet.bletooth.scan
+ * @Package cn.labelnet.bletooth.ble.scan
  * <p>
  * @Author yuan
  * @Blog http://blog.csdn.net/lablenet
@@ -10,5 +10,5 @@ package cn.labelnet.bletooth.scan;
  * @Desc Desc
  */
 
-public class ScanFilter {
+public class BleScanFilter {
 }

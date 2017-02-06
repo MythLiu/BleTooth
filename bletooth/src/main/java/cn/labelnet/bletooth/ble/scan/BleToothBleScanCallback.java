@@ -1,16 +1,14 @@
-package cn.labelnet.bletooth.scan;
+package cn.labelnet.bletooth.ble.scan;
 
 import android.bluetooth.BluetoothAdapter;
 import android.os.CountDownTimer;
-
 import java.util.List;
-
-import cn.labelnet.bletooth.bean.BleDevice;
-import cn.labelnet.util.LogUtil;
+import cn.labelnet.bletooth.ble.bean.BleDevice;
+import cn.labelnet.bletooth.util.LogUtil;
 
 
 /**
- * @Package cn.labelnet.bletooth.scan
+ * @Package cn.labelnet.bletooth.ble.scan
  * <p>
  * @Author yuan
  * @Blog http://blog.csdn.net/lablenet
@@ -21,10 +19,10 @@ import cn.labelnet.util.LogUtil;
  * (2) scan status
  */
 
-public abstract class BleToothScanCallback implements BluetoothAdapter.LeScanCallback {
+public abstract class BleToothBleScanCallback implements BluetoothAdapter.LeScanCallback {
 
 
-    private static final String TAG = BleToothScanCallback.class.getSimpleName();
+    private static final String TAG = BleToothBleScanCallback.class.getSimpleName();
     //timeout millis
     private long timeOutMillis = 3000;
     private long timeInterval = 100;
@@ -59,16 +57,16 @@ public abstract class BleToothScanCallback implements BluetoothAdapter.LeScanCal
     //start scan
     public void onStartTimmer() {
         countDownTimer.start();
-        setBleToothScanStatus(ScanStatus.scaning);
+        setBleToothScanStatus(BleScanStatus.scaning);
     }
     //stop scan
     public void onStopTimmer() {
         countDownTimer.cancel();
-        setBleToothScanStatus(ScanStatus.disscan);
+        setBleToothScanStatus(BleScanStatus.disscan);
     }
 
     //scan status
-    public abstract void setBleToothScanStatus(ScanStatus status);
+    public abstract void setBleToothScanStatus(BleScanStatus status);
 
     //scan process
     protected abstract void bleToothScanProcess(float process);

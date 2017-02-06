@@ -17,21 +17,49 @@
         android:text="Hello World!" />
 
     <Button
-        android:id="@+id/btn_start"
-        android:layout_width="wrap_content"
+        android:id="@+id/btn_conn_stop"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
+        android:layout_alignStart="@+id/btn_conn_start"
+        android:layout_below="@+id/btn_conn_start"
+        android:layout_marginTop="21dp"
+        android:text="CONN_STOP" />
+
+    <Button
+        android:id="@+id/btn_start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/textView"
-        android:layout_marginStart="31dp"
-        android:layout_marginTop="32dp"
-        android:text="Start" />
+        android:layout_marginStart="24dp"
+        android:text="SCAN_Start" />
 
     <Button
         android:id="@+id/btn_stop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/btn_start"
+        android:layout_marginTop="24dp"
+        android:layout_below="@+id/btn_start"
+        android:text="SCAN_Stop" />
+
+    <Button
+        android:id="@+id/btn_conn_start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/btn_stop"
+        android:layout_below="@+id/btn_stop"
+        android:layout_marginTop="21dp"
+        android:text="CONN_START" />
+
+    <Button
+        android:id="@+id/btn_scan_and_conn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/btn_start"
-        android:layout_below="@+id/btn_start"
-        android:layout_marginTop="29dp"
-        android:text="Stop" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignStart="@+id/btn_conn_stop"
+        android:layout_below="@+id/btn_conn_stop"
+        android:layout_marginTop="24dp"
+        android:text="Scan_Conn" />
+
+
 </RelativeLayout>

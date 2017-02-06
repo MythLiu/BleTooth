@@ -69,7 +69,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected List<String> getScanFilter() {
             List<String> filterList = new ArrayList<>();
-            filterList.add("CC2650");
+//            filterList.add("CC2650");
+            filterList.add("SimpleBLEPeripheral");
             return filterList;
         }
     }

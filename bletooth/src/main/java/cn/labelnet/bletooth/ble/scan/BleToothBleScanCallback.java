@@ -3,6 +3,8 @@ package cn.labelnet.bletooth.ble.scan;
 import android.bluetooth.BluetoothAdapter;
 import android.os.CountDownTimer;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import cn.labelnet.bletooth.exception.ScanTimeOutException;
 
 
@@ -28,6 +30,7 @@ public abstract class BleToothBleScanCallback implements BluetoothAdapter.LeScan
 
     //timer
     private CountDownTimer countDownTimer;
+    private AtomicBoolean isTimerFinish = new AtomicBoolean(false);
 
 
     public BleToothBleScanCallback(long timeOutMill) {
@@ -54,6 +57,7 @@ public abstract class BleToothBleScanCallback implements BluetoothAdapter.LeScan
 
             @Override
             public void onFinish() {
+                isTimerFinish.set(true);
                 onScanCompleteListener.onScanFinish();
             }
         };
@@ -76,13 +80,18 @@ public abstract class BleToothBleScanCallback implements BluetoothAdapter.LeScan
         countDownTimer.start();
         setBleToothScanStatus(BleScanStatus.scaning);
         onScanStart();
+        isTimerFinish.set(false);
     }
 
 
     //stop scan
     public void onStopTimmer() {
         countDownTimer.cancel();
-        onScanFinish();
+        if (isTimerFinish.get()) {
+            onScanFinish();
+        } else {
+            setBleToothScanStatus(BleScanStatus.stopscan);
+        }
     }
 
     //scan status

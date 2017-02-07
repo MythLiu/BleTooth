@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -75,6 +76,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.btn_le_test).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, LeBlueToothActivity.class));
+            }
+        });
+
     }
 
     private static class ScanCallBack extends BleScanResultCallback {
@@ -86,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public BleDevice getBleDevice() {
-            if (bleDevices.size() > 0) {
+            if (bleDevices != null && bleDevices.size() > 0) {
                 return bleDevices.get(0);
             } else {
                 return null;

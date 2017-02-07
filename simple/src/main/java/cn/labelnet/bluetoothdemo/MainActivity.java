@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothGattService;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     private BleBlueTooth bleTooth;
     private ScanCallBack callBack;
+    private static TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         bleTooth = new BleBlueTooth(getApplicationContext());
         callBack = new ScanCallBack(5000);
+        textView = (TextView) findViewById(R.id.textView);
 
         findViewById(R.id.btn_start).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,11 +96,18 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onNotifyBleToothDeviceRssi(int position, int rssi) {
             LogUtil.v("----------------------------------------------------Position : " + position + " Rssi : " + rssi);
+            if (position > -1) {
+                BleDevice bleDevice = bleDevices.get(position);
+                bleDevice.setRssi(rssi);
+                bleDevices.set(position, bleDevice);
+                updateInfo();
+            }
         }
 
         @Override
         protected void onScanDevicesData(List<BleDevice> bleDevices) {
             this.bleDevices = bleDevices;
+            updateInfo();
             LogUtil.v("=================================================== BleDevices : " + bleDevices);
         }
 
@@ -117,6 +127,14 @@ public class MainActivity extends AppCompatActivity {
 //            filterList.add("CC2650");
             filterList.add("SimpleBLEPeripheral");
             return filterList;
+        }
+
+        private void updateInfo() {
+            if (bleDevices.size() > 0) {
+                textView.setText(bleDevices.toString());
+            } else {
+                textView.setText("没有设备");
+            }
         }
     }
 

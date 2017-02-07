@@ -1,9 +1,5 @@
 package cn.labelnet.bluetoothdemo;
 
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
-import android.bluetooth.BluetoothGattService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,16 +7,14 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import cn.labelnet.bletooth.ble.BleBlueTooth;
 import cn.labelnet.bletooth.ble.bean.BleDevice;
-import cn.labelnet.bletooth.ble.conn.BleConnStatus;
-import cn.labelnet.bletooth.ble.conn.BleToothBleGattCallBack;
 import cn.labelnet.bletooth.ble.scan.BleScanResultCallback;
 import cn.labelnet.bletooth.ble.scan.BleScanStatus;
 import cn.labelnet.bletooth.util.LogUtil;
+import cn.labelnet.bluetoothdemo.callback.ConnCallBack;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -146,39 +140,5 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    private static class ConnCallBack extends BleToothBleGattCallBack {
-
-        @Override
-        public void setBleConnStatus(BleConnStatus status) {
-            LogUtil.v("=========== : 连接状态 ： " + status);
-        }
-
-        @Override
-        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-            super.onServicesDiscovered(gatt, status);
-            printServices(gatt);
-        }
-
-        @Override
-        public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
-            super.onReadRemoteRssi(gatt, rssi, status);
-            LogUtil.v("Rssi : " + rssi);
-        }
-    }
-
-    public static void printServices(BluetoothGatt gatt) {
-        if (gatt != null) {
-            for (BluetoothGattService service : gatt.getServices()) {
-                LogUtil.e("service: " + service.getUuid());
-                for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
-                    LogUtil.e("  characteristic: " + characteristic.getUuid() + " value: " + Arrays.toString(characteristic.getValue()));
-                    for (BluetoothGattDescriptor descriptor : characteristic.getDescriptors()) {
-                        LogUtil.e("        descriptor: " + descriptor.getUuid() + " value: " + Arrays.toString(descriptor.getValue()));
-                    }
-                }
-            }
-        }
-    }
 
 }

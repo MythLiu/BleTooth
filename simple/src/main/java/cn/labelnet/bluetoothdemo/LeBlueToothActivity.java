@@ -15,6 +15,7 @@ import cn.labelnet.bletooth.ble.bean.BleDevice;
 import cn.labelnet.bletooth.le.LeBlueTooth;
 import cn.labelnet.bletooth.le.scan.LeScanResultCallBack;
 import cn.labelnet.bletooth.util.LogUtil;
+import cn.labelnet.bluetoothdemo.callback.ConnCallBack;
 
 public class LeBlueToothActivity extends AppCompatActivity {
 
@@ -46,6 +47,20 @@ public class LeBlueToothActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.btn_conn_start).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                leBlueTooth.connect(leScanSimpleCallBack.getBleDevice(), false, new ConnCallBack());
+            }
+        });
+
+        findViewById(R.id.btn_conn_stop).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                leBlueTooth.disconnect();
+            }
+        });
+
     }
 
 
@@ -53,6 +68,15 @@ public class LeBlueToothActivity extends AppCompatActivity {
 
 
         private List<BleDevice> bleDevices;
+
+        public BleDevice getBleDevice() {
+            if (bleDevices != null && bleDevices.size() > 0) {
+                return bleDevices.get(0);
+            } else {
+                return null;
+            }
+        }
+
 
         public LeScanSimpleCallBack(long timeOutMill) {
             super(timeOutMill);

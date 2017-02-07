@@ -153,6 +153,7 @@ public class BleBlueTooth implements BleToothBleScanCallback.OnScanCompleteListe
             isConnBle.set(false);
             return;
         }
+        disconnect();
         connect(mBleDevice, isAutoConn.get(), gattCallBack);
     }
 
@@ -172,6 +173,7 @@ public class BleBlueTooth implements BleToothBleScanCallback.OnScanCompleteListe
             isConnBle.set(false);
             return;
         }
+        disconnect();
         connect(mBleDevice, isAutoConn.get(), gattCallBack);
     }
 

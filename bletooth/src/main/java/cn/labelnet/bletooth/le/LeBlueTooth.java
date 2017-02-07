@@ -219,6 +219,7 @@ public class LeBlueTooth implements BleToothLeScanCallBack.OnScanCompleteListene
             isConnBle.set(false);
             return;
         }
+        disconnect();
         connect(mBleDevice, isAutoConn.get(), gattCallBack);
     }
 
@@ -238,6 +239,7 @@ public class LeBlueTooth implements BleToothLeScanCallBack.OnScanCompleteListene
             isConnBle.set(false);
             return;
         }
+        disconnect();
         connect(mBleDevice, isAutoConn.get(), gattCallBack);
     }
 

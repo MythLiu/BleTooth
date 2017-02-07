@@ -3,7 +3,15 @@ package cn.labelnet.bletooth.le;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
+import android.bluetooth.BluetoothGattServer;
+import android.bluetooth.BluetoothGattServerCallback;
+import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.AdvertiseCallback;
+import android.bluetooth.le.AdvertiseData;
+import android.bluetooth.le.AdvertiseSettings;
 import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
@@ -11,8 +19,10 @@ import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.os.Build;
+import android.os.ParcelUuid;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import cn.labelnet.bletooth.ble.BleBlueTooth;
@@ -36,10 +46,15 @@ import cn.labelnet.bletooth.util.LogUtil;
 public class LeBlueTooth implements BleToothLeScanCallBack.OnScanCompleteListener
         , BleToothBleGattCallBack.OnConnStatusListener {
 
+    private static final UUID UUID_SERVER = UUID.fromString("");
+    private static final UUID UUID_CHARREAD = UUID.fromString("");
+    private static final UUID UUID_DESCRIPTOR = UUID.fromString("");
+    private static final UUID UUID_CHARWRITE = UUID.fromString("");
     private Context mContext;
 
     //bluetooth
     private BluetoothAdapter mBluetoothAdapter;
+    private BluetoothManager mBluetoothManager;
     private BluetoothGatt mBluetoothGatt;
 
     //scan
@@ -55,6 +70,10 @@ public class LeBlueTooth implements BleToothLeScanCallBack.OnScanCompleteListene
     private BleToothBleGattCallBack gattCallBack;
     private AtomicBoolean isConnBle = new AtomicBoolean(false);
 
+    /**
+     * use BluetoothGattServer init BluetoothGatt
+     */
+    private BluetoothGattServer mBluetoothGattServer;
 
     //Advertiser
     private BluetoothLeAdvertiser mBluetoothLeAdvertiser;
@@ -94,7 +113,7 @@ public class LeBlueTooth implements BleToothLeScanCallBack.OnScanCompleteListene
     }
 
     private void initBlueTooth() {
-        final BluetoothManager mBluetoothManager = (BluetoothManager) mContext.getSystemService(Context.BLUETOOTH_SERVICE);
+        mBluetoothManager = (BluetoothManager) mContext.getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = mBluetoothManager.getAdapter();
         if (isBuildLOLLIPOP()) {
             mBluetoothLeScaner = mBluetoothAdapter.getBluetoothLeScanner();
@@ -259,5 +278,75 @@ public class LeBlueTooth implements BleToothLeScanCallBack.OnScanCompleteListene
     }
 
 
+//========================================== CONN Advertiser Init GattServer==============
+
+
+    private void initGATTServer() {
+        AdvertiseSettings settings = new AdvertiseSettings.Builder()
+                .setConnectable(true)
+                .build();
+
+        AdvertiseData advertiseData = new AdvertiseData.Builder()
+                .setIncludeDeviceName(true)
+                .setIncludeTxPowerLevel(true)
+                .build();
+
+        AdvertiseData scanResponseData = new AdvertiseData.Builder()
+                .addServiceUuid(new ParcelUuid(UUID_SERVER))
+                .setIncludeTxPowerLevel(true)
+                .build();
+
+
+        AdvertiseCallback callback = new AdvertiseCallback() {
+
+            @Override
+            public void onStartSuccess(AdvertiseSettings settingsInEffect) {
+                LogUtil.v("BLE advertisement added successfully : initGATTServer success");
+                initServices();
+            }
+
+            @Override
+            public void onStartFailure(int errorCode) {
+                LogUtil.e("Failed to add BLE advertisement, reason: " + errorCode);
+            }
+        };
+
+        BluetoothLeAdvertiser bluetoothLeAdvertiser = mBluetoothAdapter.getBluetoothLeAdvertiser();
+        bluetoothLeAdvertiser.startAdvertising(settings, advertiseData, scanResponseData, callback);
+    }
+
+    private void initServices() {
+        mBluetoothGattServer = mBluetoothManager.openGattServer(mContext, bluetoothGattServerCallback);
+        BluetoothGattService service = new BluetoothGattService(UUID_SERVER, BluetoothGattService.SERVICE_TYPE_PRIMARY);
+
+        //add a read characteristic.
+        BluetoothGattCharacteristic characteristicRead = new BluetoothGattCharacteristic(UUID_CHARREAD, BluetoothGattCharacteristic.PROPERTY_READ, BluetoothGattCharacteristic.PERMISSION_READ);
+        //add a descriptor
+        BluetoothGattDescriptor descriptor = new BluetoothGattDescriptor(UUID_DESCRIPTOR, BluetoothGattCharacteristic.PERMISSION_WRITE);
+        characteristicRead.addDescriptor(descriptor);
+
+        service.addCharacteristic(characteristicRead);
+
+        //add a write characteristic.
+        BluetoothGattCharacteristic characteristicWrite = new BluetoothGattCharacteristic(UUID_CHARWRITE,
+                BluetoothGattCharacteristic.PROPERTY_WRITE |
+                        BluetoothGattCharacteristic.PROPERTY_READ |
+                        BluetoothGattCharacteristic.PROPERTY_NOTIFY,
+                BluetoothGattCharacteristic.PERMISSION_WRITE);
+        service.addCharacteristic(characteristicWrite);
+
+        mBluetoothGattServer.addService(service);
+        LogUtil.v("initServices ok");
+    }
+
+    private BluetoothGattServerCallback bluetoothGattServerCallback = new BluetoothGattServerCallback() {
+    };
+
+    private void stopAdvertise() {
+        if (mBluetoothLeAdvertiser != null) {
+//            mBluetoothLeAdvertiser.stopAdvertising(m);
+            mBluetoothLeAdvertiser = null;
+        }
+    }
 
 }

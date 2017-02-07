@@ -32,7 +32,8 @@ import cn.labelnet.bletooth.util.LogUtil;
  * (2)
  */
 
-public class BleBlueTooth {
+public class BleBlueTooth implements BleToothBleScanCallback.OnScanCompleteListener
+        , BleToothBleGattCallBack.OnConnStatusListener {
 
     private static final String TAG = BleBlueTooth.class.getSimpleName();
 
@@ -44,6 +45,13 @@ public class BleBlueTooth {
     private BluetoothGatt mBluetoothGatt;
     private BluetoothDevice mBlueToothDevice;
     private BleDevice mBleDevice;
+    //scan
+    private BleToothBleScanCallback scanCallback;
+    //conn
+    private int connCount = 0;
+    private int timeOutCount = 0;
+    private AtomicBoolean isAutoConn = new AtomicBoolean(false);
+    private BleToothBleGattCallBack gattCallBack;
 
     //control
     private Handler handler = new Handler(Looper.getMainLooper());
@@ -86,28 +94,29 @@ public class BleBlueTooth {
      * @param callback LeCallback
      */
     public void startScan(final BleToothBleScanCallback callback) {
-        boolean startResult = mBluetoothAdapter.startLeScan(callback);
+        this.scanCallback = callback;
+        boolean startResult = mBluetoothAdapter.startLeScan(scanCallback);
         if (startResult) {
-            callback.setOnScanCompleteListener(new BleToothBleScanCallback.OnScanCompleteListener() {
-                @Override
-                public void onScanFinish() {
-                    LogUtil.v("Over Scan Finish !");
-                    stopScan(callback);
-                }
-            });
-            callback.onStartTimmer();
+            callback.setOnScanCompleteListener(this);
+            scanCallback.onStartTimmer();
         } else {
-            stopScan(callback);
+            stopScan(scanCallback);
         }
     }
 
     /**
      * stop scan
-     * @param callback
+     * @param callback BleToothBleScanCallback
      */
     public void stopScan(BleToothBleScanCallback callback) {
         callback.onStopTimmer();
         mBluetoothAdapter.stopLeScan(callback);
+    }
+
+    @Override
+    public void onScanFinish() {
+        LogUtil.v("Over Scan Finish !");
+        stopScan(scanCallback);
     }
 
     //==================================== CONN ===================================================
@@ -119,7 +128,7 @@ public class BleBlueTooth {
      * @param isAutoConn            isAuto
      * @param bluetoothGattCallback callback
      */
-    public synchronized void connect(final BleDevice bleDevice, final boolean isAutoConn, final BleToothBleGattCallBack bluetoothGattCallback) {
+    public synchronized void connect(BleDevice bleDevice, boolean isAutoConn, BleToothBleGattCallBack bluetoothGattCallback) {
         if (bleDevice == null) {
             throw new IllegalArgumentException("BleDevice Bean is null!");
         }
@@ -130,46 +139,41 @@ public class BleBlueTooth {
 
         this.mBleDevice = bleDevice;
         this.mBlueToothDevice = bleDevice.getBluetoothDevice();
-
-        bluetoothGattCallback.setOnConnStatusListener(new BleToothBleGattCallBack.OnConnStatusListener() {
-
-            private int connCount = 0;
-            private int timeOutCount = 0;
-
-            @Override
-            public void onFail() {
-                connCount++;
-                if (connCount == 5) {
-                    bluetoothGattCallback.setBleConnStatus(BleConnStatus.fail);
-                    isConnBle.set(false);
-                    return;
-                }
-                connect(bleDevice, isAutoConn, bluetoothGattCallback);
-            }
-
-            @Override
-            public void onSuccess() {
-                connCount = 0;
-                timeOutCount = 0;
-                isConnBle.set(true);
-            }
-
-            @Override
-            public void onTimeOut() {
-                timeOutCount++;
-                if (timeOutCount == 5) {
-                    bluetoothGattCallback.setBleConnStatus(BleConnStatus.conntimeout);
-                    ClsBleUtil.cancelBondProcess(mBlueToothDevice);
-                    isConnBle.set(false);
-                    return;
-                }
-                connect(bleDevice, isAutoConn, bluetoothGattCallback);
-            }
-
-        });
+        this.isAutoConn.set(isAutoConn);
+        this.gattCallBack = bluetoothGattCallback;
+        bluetoothGattCallback.setOnConnStatusListener(this);
         mBluetoothGatt = mBlueToothDevice.connectGatt(mContext, isAutoConn, bluetoothGattCallback);
     }
 
+    @Override
+    public void onFail() {
+        connCount++;
+        if (connCount == 5) {
+            gattCallBack.setBleConnStatus(BleConnStatus.fail);
+            isConnBle.set(false);
+            return;
+        }
+        connect(mBleDevice, isAutoConn.get(), gattCallBack);
+    }
+
+    @Override
+    public void onSuccess() {
+        connCount = 0;
+        timeOutCount = 0;
+        isConnBle.set(true);
+    }
+
+    @Override
+    public void onTimeOut() {
+        timeOutCount++;
+        if (timeOutCount == 5) {
+            gattCallBack.setBleConnStatus(BleConnStatus.conntimeout);
+            ClsBleUtil.cancelBondProcess(mBlueToothDevice);
+            isConnBle.set(false);
+            return;
+        }
+        connect(mBleDevice, isAutoConn.get(), gattCallBack);
+    }
 
     /**
      * disconnect, refresh and close bluetooth gatt.

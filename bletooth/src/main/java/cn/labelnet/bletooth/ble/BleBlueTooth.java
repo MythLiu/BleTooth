@@ -248,4 +248,14 @@ public class BleBlueTooth {
     public BluetoothAdapter getmBluetoothAdapter() {
         return mBluetoothAdapter;
     }
+
+
+    //==================================== READ ===================================================
+
+
+
+
+
+
+
 }

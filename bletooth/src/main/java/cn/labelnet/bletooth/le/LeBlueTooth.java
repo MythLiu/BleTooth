@@ -280,7 +280,7 @@ public class LeBlueTooth implements BleToothLeScanCallBack.OnScanCompleteListene
     }
 
 
-//========================================== CONN Advertiser Init GattServer==============
+//========================================== 外围设备 Advertiser Init GattServer==============
 
 
     private void initGATTServer() {

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +62,19 @@ public class LeBlueToothActivity extends AppCompatActivity {
             }
         });
 
+        initPerlal();
+
+    }
+
+    private void initPerlal() {
+        if (leBlueTooth.isCheckSupportPerpheral()) {
+
+            Toast.makeText(this, "手机支持外围设备", Toast.LENGTH_SHORT).show();
+            leBlueTooth.initGATTServer();
+
+        } else {
+            Toast.makeText(this, "该手机不支持外围设备", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -125,7 +139,7 @@ public class LeBlueToothActivity extends AppCompatActivity {
             List<ScanFilter> scanFilters = new ArrayList<>();
             ScanFilter filter1 = new ScanFilter
                     .Builder()
-                    .setDeviceName("SimpleBLEPeripheral")
+                    .setDeviceName("CC2650 SensorTag")
                     .build();
             scanFilters.add(filter1);
             return scanFilters;

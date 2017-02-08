@@ -25,6 +25,12 @@ public class ConnCallBack extends BleToothBleGattCallBack {
         printServices(gatt);
     }
 
+    @Override
+    public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+        super.onCharacteristicChanged(gatt, characteristic);
+        LogUtil.v("onCharacteristicChanged 收到的数据 ： " + characteristic.getValue());
+    }
+
     public static void printServices(BluetoothGatt gatt) {
         if (gatt != null) {
             for (BluetoothGattService service : gatt.getServices()) {
@@ -32,7 +38,7 @@ public class ConnCallBack extends BleToothBleGattCallBack {
                 for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
                     LogUtil.e("  characteristic: " + characteristic.getUuid() + " value: " + Arrays.toString(characteristic.getValue()));
                     for (BluetoothGattDescriptor descriptor : characteristic.getDescriptors()) {
-                        LogUtil.e("        descriptor: " + descriptor.getUuid() + " value: " + Arrays.toString(descriptor.getValue()));
+                        LogUtil.e("  descriptor: " + descriptor.getUuid() + " value: " + Arrays.toString(descriptor.getValue()));
                     }
                 }
             }

@@ -21,8 +21,8 @@ import android.content.Context;
 import android.os.Build;
 import android.os.ParcelUuid;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import cn.labelnet.bletooth.ble.BleBlueTooth;
@@ -30,6 +30,7 @@ import cn.labelnet.bletooth.ble.bean.BleDevice;
 import cn.labelnet.bletooth.ble.conn.BleConnStatus;
 import cn.labelnet.bletooth.ble.conn.BleToothBleGattCallBack;
 import cn.labelnet.bletooth.le.scan.BleToothLeScanCallBack;
+import cn.labelnet.bletooth.le.uuid.TestUUID;
 import cn.labelnet.bletooth.util.ClsBleUtil;
 import cn.labelnet.bletooth.util.LogUtil;
 
@@ -46,10 +47,6 @@ import cn.labelnet.bletooth.util.LogUtil;
 public class LeBlueTooth implements BleToothLeScanCallBack.OnScanCompleteListener
         , BleToothBleGattCallBack.OnConnStatusListener {
 
-    private static final UUID UUID_SERVER = UUID.fromString("");
-    private static final UUID UUID_CHARREAD = UUID.fromString("");
-    private static final UUID UUID_DESCRIPTOR = UUID.fromString("");
-    private static final UUID UUID_CHARWRITE = UUID.fromString("");
     private Context mContext;
 
     //bluetooth
@@ -283,7 +280,7 @@ public class LeBlueTooth implements BleToothLeScanCallBack.OnScanCompleteListene
 //========================================== 外围设备 Advertiser Init GattServer==============
 
 
-    private void initGATTServer() {
+    public void initGATTServer() {
         AdvertiseSettings settings = new AdvertiseSettings.Builder()
                 .setConnectable(true)
                 .build();
@@ -294,7 +291,7 @@ public class LeBlueTooth implements BleToothLeScanCallBack.OnScanCompleteListene
                 .build();
 
         AdvertiseData scanResponseData = new AdvertiseData.Builder()
-                .addServiceUuid(new ParcelUuid(UUID_SERVER))
+                .addServiceUuid(new ParcelUuid(TestUUID.UUID_MOV_SERV))
                 .setIncludeTxPowerLevel(true)
                 .build();
 
@@ -319,29 +316,112 @@ public class LeBlueTooth implements BleToothLeScanCallBack.OnScanCompleteListene
 
     private void initServices() {
         mBluetoothGattServer = mBluetoothManager.openGattServer(mContext, bluetoothGattServerCallback);
-        BluetoothGattService service = new BluetoothGattService(UUID_SERVER, BluetoothGattService.SERVICE_TYPE_PRIMARY);
+        BluetoothGattService service = new BluetoothGattService(TestUUID.UUID_MOV_SERV, BluetoothGattService.SERVICE_TYPE_PRIMARY);
 
-        //add a read characteristic.
-        BluetoothGattCharacteristic characteristicRead = new BluetoothGattCharacteristic(UUID_CHARREAD, BluetoothGattCharacteristic.PROPERTY_READ, BluetoothGattCharacteristic.PERMISSION_READ);
-        //add a descriptor
-        BluetoothGattDescriptor descriptor = new BluetoothGattDescriptor(UUID_DESCRIPTOR, BluetoothGattCharacteristic.PERMISSION_WRITE);
-        characteristicRead.addDescriptor(descriptor);
+        //Read : Add data Characteristic
+        BluetoothGattCharacteristic characteristicDataRead = new BluetoothGattCharacteristic(TestUUID.UUID_MOV_DATA, BluetoothGattCharacteristic.PROPERTY_READ, BluetoothGattCharacteristic.PERMISSION_READ);
+        BluetoothGattDescriptor descriptor = new BluetoothGattDescriptor(TestUUID.UUID_MOV__DESCRIPTOR, BluetoothGattCharacteristic.PERMISSION_WRITE);
+        descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);//设置开启通知
+        characteristicDataRead.addDescriptor(descriptor);
+        service.addCharacteristic(characteristicDataRead);
 
-        service.addCharacteristic(characteristicRead);
-
-        //add a write characteristic.
-        BluetoothGattCharacteristic characteristicWrite = new BluetoothGattCharacteristic(UUID_CHARWRITE,
+        //Write :Add conf Characteristic
+        BluetoothGattCharacteristic characteristicConfWrite = new BluetoothGattCharacteristic(TestUUID.UUID_MOV_CONF,
                 BluetoothGattCharacteristic.PROPERTY_WRITE |
                         BluetoothGattCharacteristic.PROPERTY_READ |
                         BluetoothGattCharacteristic.PROPERTY_NOTIFY,
                 BluetoothGattCharacteristic.PERMISSION_WRITE);
-        service.addCharacteristic(characteristicWrite);
+        byte b[] = new byte[]{0x7F, 0x00};
+        characteristicConfWrite.setValue(b);
+        service.addCharacteristic(characteristicConfWrite);
+
+        //Period
+        BluetoothGattCharacteristic characteristicPeriodWrite = new BluetoothGattCharacteristic(TestUUID.UUID_MOV_CONF,
+                BluetoothGattCharacteristic.PROPERTY_WRITE |
+                        BluetoothGattCharacteristic.PROPERTY_READ |
+                        BluetoothGattCharacteristic.PROPERTY_NOTIFY,
+                BluetoothGattCharacteristic.PERMISSION_WRITE);
+        service.addCharacteristic(characteristicPeriodWrite);
 
         mBluetoothGattServer.addService(service);
         LogUtil.v("initServices ok");
     }
 
     private BluetoothGattServerCallback bluetoothGattServerCallback = new BluetoothGattServerCallback() {
+
+        private int index = 10;
+
+        @Override
+        public void onConnectionStateChange(BluetoothDevice device, int status, int newState) {
+            super.onConnectionStateChange(device, status, newState);
+            LogUtil.v("onConnectionStateChange() : " + newState);
+        }
+
+        @Override
+        public void onServiceAdded(int status, BluetoothGattService service) {
+            super.onServiceAdded(status, service);
+            LogUtil.v("onServiceAdded() : " + status);
+        }
+
+        @Override
+        public void onCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattCharacteristic characteristic) {
+//            super.onCharacteristicReadRequest(device, requestId, offset, characteristic);
+            LogUtil.v("onCharacteristicReadRequest() : " + device.getName() + " | " + device.getAddress());
+
+            mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, characteristic.getValue());
+        }
+
+        @Override
+        public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId, BluetoothGattCharacteristic characteristic, boolean preparedWrite, boolean responseNeeded, int offset, byte[] requestBytes) {
+//            super.onCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite, responseNeeded, offset, value);
+            LogUtil.v("onCharacteristicWriteRequest() : " + device.getName() + " | " + device.getAddress());
+            mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, requestBytes);
+            //处理响应内容
+            onResponseToClient(requestBytes, device, requestId, characteristic);
+        }
+
+        private void onResponseToClient(byte[] requestBytes, BluetoothDevice device, int requestId, BluetoothGattCharacteristic characteristic) {
+            LogUtil.e("onResponseToClient : 收到的数据 ： " + Arrays.toString(requestBytes));
+            index++;
+            characteristic.setValue("toClient : " + index);
+            //重新相应
+            mBluetoothGattServer.notifyCharacteristicChanged(device, characteristic, false);
+        }
+
+        @Override
+        public void onDescriptorWriteRequest(BluetoothDevice device, int requestId, BluetoothGattDescriptor descriptor, boolean preparedWrite, boolean responseNeeded, int offset, byte[] value) {
+            // super.onDescriptorWriteRequest(device, requestId, descriptor, preparedWrite, responseNeeded, offset, value);
+
+            LogUtil.v("onDescriptorWriteRequest() : " + device.getName() + " | " + device.getAddress());
+            mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, value);
+        }
+
+        @Override
+        public void onDescriptorReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattDescriptor descriptor) {
+//            super.onDescriptorReadRequest(device, requestId, offset, descriptor);
+            LogUtil.v("onDescriptorReadRequest() : " + device.getName() + " | " + device.getAddress());
+            mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, null);
+        }
+
+        @Override
+        public void onNotificationSent(BluetoothDevice device, int status) {
+//            super.onNotificationSent(device, status);
+            LogUtil.v("onNotificationSent() : " + device.getName() + " | " + device.getAddress() + " STATUS : " + status);
+        }
+
+        @Override
+        public void onExecuteWrite(BluetoothDevice device, int requestId, boolean execute) {
+//            super.onExecuteWrite(device, requestId, execute);
+            LogUtil.v("onExecuteWrite() : " + device.getName() + " | " + device.getAddress() + " requestId : " + requestId);
+        }
+
+        @Override
+        public void onMtuChanged(BluetoothDevice device, int mtu) {
+//            super.onMtuChanged(device, mtu);
+            LogUtil.v("onMtuChanged() : " + device.getName() + " | " + device.getAddress() + " mtu : " + mtu);
+        }
+
+
     };
 
     private void stopAdvertise() {

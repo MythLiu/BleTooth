@@ -1,6 +1,32 @@
 package cn.labelnet.bletooth;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanSettings;
+import android.content.Context;
 import android.os.Build;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import cn.labelnet.bletooth.ble.BleBlueTooth;
+import cn.labelnet.bletooth.ble.bean.BleDevice;
+import cn.labelnet.bletooth.ble.conn.BleConnStatus;
+import cn.labelnet.bletooth.ble.conn.BleToothBleGattCallBack;
+import cn.labelnet.bletooth.ble.scan.BleScanResultMacCallback;
+import cn.labelnet.bletooth.ble.scan.BleScanStatus;
+import cn.labelnet.bletooth.ble.scan.BleToothBleScanCallback;
+import cn.labelnet.bletooth.core.BleScanCallBack;
+import cn.labelnet.bletooth.core.SimpleBleScanResultCallback;
+import cn.labelnet.bletooth.core.SimpleLeScanResultCallBack;
+import cn.labelnet.bletooth.le.scan.BleToothLeScanCallBack;
+import cn.labelnet.bletooth.util.ClsBleUtil;
+import cn.labelnet.bletooth.util.LogUtil;
 
 /**
  * @Package cn.labelnet
@@ -9,11 +35,308 @@ import android.os.Build;
  * @Blog http://blog.csdn.net/lablenet
  * <p>
  * @Date Created in 5:58 PM 2/5/2017
- * @Desc bletooth 包下为4.3 ~ 5.0
- * letooth 包下为 >= 5.0
+ * @Desc
+ *
  */
 
-public class BleTooth {
+public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
+        , BleToothLeScanCallBack.OnScanCompleteListener
+        , BleToothBleGattCallBack.OnConnStatusListener {
+
+    private static final String TAG = BleBlueTooth.class.getSimpleName();
+
+    private Context mContext;
+
+    //bluetooth
+    private BluetoothAdapter mBluetoothAdapter;
+    private BluetoothManager mBluetoothManager;
+    private BluetoothGatt mBluetoothGatt;
+    private BluetoothDevice mBlueToothDevice;
+    private BleDevice mBleDevice;
+    //scan
+    private BleToothBleScanCallback scanCallback;
+    //scan  5.0 scanner
+    private BluetoothLeScanner mBluetoothLeScaner;
+    private BleToothLeScanCallBack leScanCallBack;
+    //conn
+    private int connCount = 0;
+    private int timeOutCount = 0;
+    private AtomicBoolean isAutoConn = new AtomicBoolean(false);
+    private BleToothBleGattCallBack gattCallBack;
+
+    //control
+    private AtomicBoolean isConnBle = new AtomicBoolean(false);
+
+    private static BleTooth mInstance;
+
+    public static BleTooth getInstance(Context context) {
+        if (mInstance == null) {
+            synchronized (BleBlueTooth.class) {
+                if (mInstance == null) {
+                    mInstance = new BleTooth(context);
+                }
+            }
+        }
+        return mInstance;
+    }
+
+
+    /**
+     * init bluetooth
+     *
+     * @param context Application Context
+     */
+    public BleTooth(Context context) {
+        this.mContext = context.getApplicationContext();
+        initBlueTooth();
+    }
+
+    private void initBlueTooth() {
+        mBluetoothManager = (BluetoothManager) mContext.getSystemService(Context.BLUETOOTH_SERVICE);
+        mBluetoothAdapter = mBluetoothManager.getAdapter();
+        if (isBuildLOLLIPOP()) {
+            mBluetoothLeScaner = mBluetoothAdapter.getBluetoothLeScanner();
+        }
+    }
+
+    //==================================== SCAN ===================================================
+
+
+    public void startScan(final BleScanCallBack bleScanCallBack) {
+        if (isBuildLOLLIPOP()) {
+            //5.0
+            LogUtil.v("start scan android 5.0 Le");
+            leScanCallBack = new SimpleLeScanResultCallBack(bleScanCallBack);
+            startScan(leScanCallBack);
+        } else {
+            LogUtil.v("start scan android 4.3 BLe");
+            scanCallback = new SimpleBleScanResultCallback(bleScanCallBack);
+            startScan(scanCallback);
+        }
+    }
+
+    /**
+     * start scan
+     *
+     * @param callback LeCallback
+     */
+    private void startScan(final BleToothBleScanCallback callback) {
+        this.scanCallback = callback;
+        boolean startResult = mBluetoothAdapter.startLeScan(scanCallback);
+        if (startResult) {
+            callback.setOnScanCompleteListener(this);
+            scanCallback.onStartTimmer();
+        } else {
+            stopScan(scanCallback);
+        }
+    }
+
+    /**
+     * android 5.0 scan
+     * start scan ble
+     * filter need override @see BleToothLeScanCallBack#getScanFilters() method
+     * setting need override @see BleToothLeScanCallBack#getScanSettings(ScanSettings) method
+     *
+     * @param leScanCallBack android 5.0
+     */
+    private void startScan(final BleToothLeScanCallBack leScanCallBack) {
+        if (leScanCallBack == null) {
+            throw new IllegalArgumentException("start Scan callback is null");
+        }
+        this.leScanCallBack = leScanCallBack;
+        startScan(leScanCallBack.getScanFilters()
+                , leScanCallBack.getScanSettings(new ScanSettings.Builder())
+                , leScanCallBack);
+        leScanCallBack.setOnScanCompleteListener(this);
+        leScanCallBack.onStartTimmer();
+    }
+
+
+    private void startScan(List<ScanFilter> filters, ScanSettings settings,
+                           final ScanCallback callback) {
+        if (mBluetoothLeScaner != null) {
+            mBluetoothLeScaner.startScan(filters, settings, callback);
+        } else {
+            throw new IllegalArgumentException("Don't Support BLE BlueToothLeScanner");
+        }
+    }
+
+    /**
+     * stop scan
+     *
+     * @param callback BleToothBleScanCallback
+     */
+    private void stopScan(BleToothBleScanCallback callback) {
+        callback.onStopTimmer();
+        mBluetoothAdapter.stopLeScan(callback);
+    }
+
+
+    /**
+     * android 5.0
+     * stop scan
+     *
+     * @param leScanCallBack
+     */
+    private void stopScan(final BleToothLeScanCallBack leScanCallBack) {
+        if (mBluetoothLeScaner != null) {
+            leScanCallBack.onStopTimmer();
+            mBluetoothLeScaner.stopScan(leScanCallBack);
+        }
+    }
+
+    @Override
+    public void onScanFinish() {
+        LogUtil.v("Over Scan Finish !");
+        if (isBuildLOLLIPOP()) {
+            stopScan(leScanCallBack);
+        } else {
+            stopScan(scanCallback);
+        }
+    }
+
+    //==================================== CONN ===================================================
+
+    /**
+     * conn blue
+     *
+     * @param bleDevice             chip bean
+     * @param isAutoConn            isAuto
+     * @param bluetoothGattCallback callback
+     */
+    public synchronized void connect(BleDevice bleDevice, boolean isAutoConn, BleToothBleGattCallBack bluetoothGattCallback) {
+        if (bleDevice == null) {
+            throw new IllegalArgumentException("BleDevice Bean is null!");
+        }
+
+        if (bluetoothGattCallback == null) {
+            throw new IllegalArgumentException("BleToothBleGattCallBack is null!");
+        }
+
+        this.mBleDevice = bleDevice;
+        this.mBlueToothDevice = bleDevice.getBluetoothDevice();
+        this.isAutoConn.set(isAutoConn);
+        this.gattCallBack = bluetoothGattCallback;
+        bluetoothGattCallback.setOnConnStatusListener(this);
+        mBluetoothGatt = mBlueToothDevice.connectGatt(mContext, isAutoConn, bluetoothGattCallback);
+    }
+
+    @Override
+    public void onFail() {
+        connCount++;
+        if (connCount == 5) {
+            gattCallBack.setBleConnStatus(BleConnStatus.fail);
+            isConnBle.set(false);
+            return;
+        }
+        disconnect();
+        connect(mBleDevice, isAutoConn.get(), gattCallBack);
+    }
+
+    @Override
+    public void onSuccess() {
+        connCount = 0;
+        timeOutCount = 0;
+        isConnBle.set(true);
+    }
+
+    @Override
+    public void onTimeOut() {
+        timeOutCount++;
+        if (timeOutCount == 5) {
+            gattCallBack.setBleConnStatus(BleConnStatus.conntimeout);
+            ClsBleUtil.cancelBondProcess(mBlueToothDevice);
+            isConnBle.set(false);
+            return;
+        }
+        disconnect();
+        connect(mBleDevice, isAutoConn.get(), gattCallBack);
+    }
+
+    /**
+     * disconnect, refresh and close bluetooth gatt.
+     */
+    public void disconnect() {
+        if (mBluetoothGatt != null) {
+            mBluetoothGatt.disconnect();
+            ClsBleUtil.refreshDeviceCache(mBluetoothGatt);
+            mBluetoothGatt.close();
+        }
+    }
+
+    /**
+     * is conn ble tooth
+     *
+     * @return
+     */
+    public boolean isConnBleTooth() {
+        return isConnBle.get();
+    }
+
+
+    /**
+     * scan and conn
+     *
+     * @param mac
+     * @param isAutoConn
+     * @param bluetoothGattCallback
+     */
+    public void scanAndConnect(String mac, final boolean isAutoConn, final BleToothBleGattCallBack bluetoothGattCallback) {
+
+        if (mac == null || mac.split(":").length != 6) {
+            throw new IllegalArgumentException("MAC is null or error! ");
+        }
+
+        startScan(new BleScanResultMacCallback(3000, mac) {
+            @Override
+            protected void onNotifyBleToothDeviceRssi(int position, int rssi) {
+
+            }
+
+            @Override
+            protected void onScanDevicesData(List<BleDevice> bleDevices) {
+                LogUtil.v("Ble : " + bleDevices);
+                if (bleDevices.size() > 0) {
+                    mBleDevice = bleDevices.get(0);
+                    mBlueToothDevice = mBleDevice.getBluetoothDevice();
+                    connect(mBleDevice, isAutoConn, bluetoothGattCallback);
+                }
+            }
+
+            @Override
+            public void setBleToothScanStatus(BleScanStatus status) {
+
+            }
+
+            @Override
+            protected void bleToothScanProcess(float process) {
+
+            }
+        });
+    }
+
+    public BluetoothGatt getmBluetoothGatt() {
+        return mBluetoothGatt;
+    }
+
+    public BleDevice getmBleDevice() {
+        return mBleDevice;
+    }
+
+    public Context getmContext() {
+        return mContext;
+    }
+
+    public BluetoothAdapter getmBluetoothAdapter() {
+        return mBluetoothAdapter;
+    }
+
+
+    //==================================== READ ===================================================
+
+
+
+
 
     /**
      * support Android L 5.0

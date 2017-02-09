@@ -44,12 +44,14 @@ public abstract class BleScanResultCallback extends BleToothBleScanCallback {
 
     @Override
     public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-        LogUtil.v("Name : " + device.getName() + " | MAC : "+device.getAddress() + " | RSSI　：　" + rssi);
         String deviceName = device.getName();
         String deviceMac = device.getAddress();
         if (deviceName != null && deviceName.trim().length() > 0) {
             //chip Name can use !
             if (isScanDeviceFilter(deviceName, deviceMac)) {
+
+                LogUtil.v("Name : " + deviceName + " | MAC : " + deviceMac + " | RSSI　：　" + rssi);
+
                 BleDevice bleDevice = new BleDevice();
                 bleDevice.setBluetoothDevice(device);
                 bleDevice.setDeviceName(deviceName);

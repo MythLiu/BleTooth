@@ -11,5 +11,5 @@ package cn.labelnet.bletooth.ble.scan;
  */
 
 public enum BleScanStatus {
-    scaning,disscan,timeout,stopscan
+    scaning,disscan,timeout,stopscan,scannererror
 }

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.labelnet.bletooth.ble.bean.BleDevice;
+import cn.labelnet.bletooth.core.BleScanFilter;
 import cn.labelnet.bletooth.util.LogUtil;
 
 /**
@@ -48,7 +49,7 @@ public abstract class BleScanResultCallback extends BleToothBleScanCallback {
         String deviceMac = device.getAddress();
         if (deviceName != null && deviceName.trim().length() > 0) {
             //chip Name can use !
-            if (isScanDeviceNameFilter(deviceName)) {
+            if (isScanDeviceFilter(deviceName, deviceMac)) {
                 BleDevice bleDevice = new BleDevice();
                 bleDevice.setBluetoothDevice(device);
                 bleDevice.setDeviceName(deviceName);
@@ -63,11 +64,15 @@ public abstract class BleScanResultCallback extends BleToothBleScanCallback {
     /**
      * filter
      *
+     *
      * @param deviceName chip Name
+     * @param deviceMac  chip mac
      * @return is need chip Name
      */
-    private boolean isScanDeviceNameFilter(String deviceName) {
-        List<String> scanFilter = getScanFilter();
+    private boolean isScanDeviceFilter(String deviceName, String deviceMac) {
+
+        List<BleScanFilter> scanFilter = getScanFilter();
+        int index = 0;
 
         // no filter
         if (scanFilter == null || scanFilter.size() == 0) {
@@ -75,11 +80,34 @@ public abstract class BleScanResultCallback extends BleToothBleScanCallback {
         }
 
         // have filter
-        for (String filter : scanFilter) {
-            if (deviceName.startsWith(filter) || deviceName.endsWith(filter) || deviceName.contains(filter)) {
-                return true;
+        for (BleScanFilter devicefilter : scanFilter) {
+
+            //filter Device Name
+            if (devicefilter.getDeviceName() != null) {
+                String filter = devicefilter.getDeviceName();
+                if (deviceName.equals(filter) || deviceName.startsWith(filter) || deviceName.endsWith(filter) || deviceName.contains(filter)) {
+                    return true;
+                }
+            }
+
+            //filter Device Mac
+            if (devicefilter.getDeviceMac() != null) {
+                String filter = devicefilter.getDeviceMac();
+                if (deviceMac.equals(filter)) {
+                    return true;
+                }
+            }
+
+            if (devicefilter.getDeviceMac() == null && devicefilter.getDeviceName() == null) {
+                index++;
             }
         }
+
+        if (index == scanFilter.size()) {
+            //no filter
+            return true;
+        }
+
         return false;
     }
 
@@ -102,7 +130,7 @@ public abstract class BleScanResultCallback extends BleToothBleScanCallback {
      *
      * @return filter
      */
-    protected List<String> getScanFilter() {
+    protected List<BleScanFilter> getScanFilter() {
         return null;
     }
 

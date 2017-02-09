@@ -11,7 +11,6 @@ import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.os.Build;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -19,12 +18,11 @@ import cn.labelnet.bletooth.ble.BleBlueTooth;
 import cn.labelnet.bletooth.ble.bean.BleDevice;
 import cn.labelnet.bletooth.ble.conn.BleConnStatus;
 import cn.labelnet.bletooth.ble.conn.BleToothBleGattCallBack;
-import cn.labelnet.bletooth.ble.scan.BleScanStatus;
 import cn.labelnet.bletooth.ble.scan.BleToothBleScanCallback;
 import cn.labelnet.bletooth.core.BleScanCallBack;
-import cn.labelnet.bletooth.core.BleScanFilter;
 import cn.labelnet.bletooth.core.SimpleBleScanResultCallback;
 import cn.labelnet.bletooth.core.SimpleLeScanResultCallBack;
+import cn.labelnet.bletooth.core.SimpleScanAndConnCallBack;
 import cn.labelnet.bletooth.le.scan.BleToothLeScanCallBack;
 import cn.labelnet.bletooth.util.ClsBleUtil;
 import cn.labelnet.bletooth.util.LogUtil;
@@ -103,6 +101,11 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
     //==================================== SCAN ===================================================
 
 
+    /**
+     * start scan must be params is BleScanCallBack
+     *
+     * @param bleScanCallBack 5.0 and 4.3 scan callback
+     */
     public void startScan(final BleScanCallBack bleScanCallBack) {
 
         if (bleScanCallBack == null) {
@@ -111,11 +114,11 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
 
         if (isBuildLOLLIPOP()) {
             //5.0
-            LogUtil.v("start scan android 5.0 Le");
+            LogUtil.v("start scan use android 5.0 Le");
             leScanCallBack = new SimpleLeScanResultCallBack(bleScanCallBack);
             startScan(leScanCallBack);
         } else {
-            LogUtil.v("start scan android 4.3 BLe");
+            LogUtil.v("start scan use android 4.3 BLe");
             scanCallback = new SimpleBleScanResultCallback(bleScanCallBack);
             startScan(scanCallback);
         }
@@ -283,62 +286,64 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
         return isConnBle.get();
     }
 
+    //==================================== Scan and Conn =========================================
+
 
     /**
-     * scan and conn
+     * scan conn
      *
-     * @param mac
-     * @param isAutoConn
-     * @param bluetoothGattCallback
+     * @param mac                   mac address
+     * @param bluetoothGattCallback conn callback
+     * @param onScanAndConnListener scan listener
      */
-    public void scanAndConnect(final String mac, final boolean isAutoConn, final BleToothBleGattCallBack bluetoothGattCallback) {
+    public void scanAndConnect(String mac
+            , final BleToothBleGattCallBack bluetoothGattCallback
+            , SimpleScanAndConnCallBack.OnScanAndConnListener onScanAndConnListener) {
+        scanAndConnect(mac, false, bluetoothGattCallback, onScanAndConnListener);
+    }
+
+    /**
+     * scan conn
+     *
+     * @param mac                   mac address
+     * @param isAutoConn            auto conn
+     * @param bluetoothGattCallback conn callback
+     * @param onScanAndConnListener scan listener
+     */
+    public void scanAndConnect(final String mac
+            , final boolean isAutoConn
+            , final BleToothBleGattCallBack bluetoothGattCallback
+            , SimpleScanAndConnCallBack.OnScanAndConnListener onScanAndConnListener) {
 
         if (mac == null || mac.split(":").length != 6) {
             throw new IllegalArgumentException("MAC is null or error! ");
         }
-        startScan(new SimpleBleScanResultCallback(new BleScanCallBack(3000) {
+
+        SimpleScanAndConnCallBack scanAndConnCallBack = new SimpleScanAndConnCallBack(mac) {
             @Override
-            public void onScanDevicesData(List<BleDevice> bleDevices) {
-                LogUtil.v("Ble : " + bleDevices);
-                if (bleDevices.size() > 0) {
-                    mBleDevice = bleDevices.get(0);
-                    mBlueToothDevice = mBleDevice.getBluetoothDevice();
-                    connect(mBleDevice, isAutoConn, bluetoothGattCallback);
-                }
+            protected void onConnect(BleDevice bleDevice) {
+                mBleDevice = bleDevice;
+                mBlueToothDevice = bleDevice.getBluetoothDevice();
+                connect(bleDevice, isAutoConn, bluetoothGattCallback);
             }
-
-            @Override
-            public void onScanProcess(float process) {
-
-            }
-
-            @Override
-            public void onScanStatus(BleScanStatus status) {
-
-            }
-
-            @Override
-            public List<BleScanFilter> getScanFilter() {
-                List<BleScanFilter> bleScanFilters = new ArrayList<>();
-                bleScanFilters.add(new BleScanFilter.Builder().setDeviceMac(mac).build());
-                return bleScanFilters;
-            }
-        }));
+        };
+        scanAndConnCallBack.setOnScanAndConnListener(onScanAndConnListener);
+        startScan(scanAndConnCallBack);
     }
 
-    public BluetoothGatt getmBluetoothGatt() {
+    public BluetoothGatt getBluetoothGatt() {
         return mBluetoothGatt;
     }
 
-    public BleDevice getmBleDevice() {
+    public BleDevice getBleDevice() {
         return mBleDevice;
     }
 
-    public Context getmContext() {
+    public Context getContext() {
         return mContext;
     }
 
-    public BluetoothAdapter getmBluetoothAdapter() {
+    public BluetoothAdapter getBluetoothAdapter() {
         return mBluetoothAdapter;
     }
 

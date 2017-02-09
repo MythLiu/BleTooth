@@ -38,4 +38,12 @@ public class BleCharacteristicUUID {
     public void setDescriptorUUIDs(List<String> descriptorUUIDs) {
         this.descriptorUUIDs = descriptorUUIDs;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                " 'CharacteristicUUID' : " + characteristicUUID  +
+                ", 'DescriptorUUIDs' : " + descriptorUUIDs +
+                '}';
+    }
 }

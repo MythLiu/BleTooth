@@ -38,4 +38,12 @@ public class BleServiceUUID {
     public void setBleCharacteristicUUIDs(List<BleCharacteristicUUID> bleCharacteristicUUIDs) {
         this.bleCharacteristicUUIDs = bleCharacteristicUUIDs;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                " 'ServiceUUID' : " + serviceUUID +
+                ", 'CharacteristicUUIDs' : " + bleCharacteristicUUIDs +
+                '}';
+    }
 }

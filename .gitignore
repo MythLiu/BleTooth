@@ -16,10 +16,4 @@ gradle
 .idea/misc.xml
 .idea/modules.xml
 .idea/runConfigurations.xml
-bletooth/libs/
-bletooth/src/androidTest/
-bletooth/src/main/java/cn/labelnet/bletooth/core/
-bletooth/src/main/res/drawable/
 gradle/
-simple/libs/
-simple/src/main/res/drawable/

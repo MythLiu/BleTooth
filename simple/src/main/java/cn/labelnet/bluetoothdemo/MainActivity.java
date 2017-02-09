@@ -13,6 +13,7 @@ import cn.labelnet.bletooth.ble.BleBlueTooth;
 import cn.labelnet.bletooth.ble.bean.BleDevice;
 import cn.labelnet.bletooth.ble.scan.BleScanResultCallback;
 import cn.labelnet.bletooth.ble.scan.BleScanStatus;
+import cn.labelnet.bletooth.core.BleScanFilter;
 import cn.labelnet.bletooth.util.LogUtil;
 import cn.labelnet.bluetoothdemo.callback.ConnCallBack;
 
@@ -124,11 +125,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected List<String> getScanFilter() {
-            List<String> filterList = new ArrayList<>();
-//            filterList.add("CC2650");
-            filterList.add("SimpleBLEPeripheral");
-            return filterList;
+        protected List<BleScanFilter> getScanFilter() {
+
+            //CC2650 SensorTag
+            //SimpleBLEPeripheral
+            List<BleScanFilter> filters = new ArrayList<>();
+            filters.add(new BleScanFilter.Builder()
+                    .setDeviceName("小米手机")
+                    .build());
+            return filters;
         }
 
         private void updateInfo() {

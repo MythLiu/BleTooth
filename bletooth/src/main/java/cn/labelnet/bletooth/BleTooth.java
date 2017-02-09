@@ -11,6 +11,7 @@ import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.os.Build;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -18,10 +19,10 @@ import cn.labelnet.bletooth.ble.BleBlueTooth;
 import cn.labelnet.bletooth.ble.bean.BleDevice;
 import cn.labelnet.bletooth.ble.conn.BleConnStatus;
 import cn.labelnet.bletooth.ble.conn.BleToothBleGattCallBack;
-import cn.labelnet.bletooth.ble.scan.BleScanResultMacCallback;
 import cn.labelnet.bletooth.ble.scan.BleScanStatus;
 import cn.labelnet.bletooth.ble.scan.BleToothBleScanCallback;
 import cn.labelnet.bletooth.core.BleScanCallBack;
+import cn.labelnet.bletooth.core.BleScanFilter;
 import cn.labelnet.bletooth.core.SimpleBleScanResultCallback;
 import cn.labelnet.bletooth.core.SimpleLeScanResultCallBack;
 import cn.labelnet.bletooth.le.scan.BleToothLeScanCallBack;
@@ -103,6 +104,11 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
 
 
     public void startScan(final BleScanCallBack bleScanCallBack) {
+
+        if (bleScanCallBack == null) {
+            throw new IllegalArgumentException("StartScan BleScanCallBack is Null");
+        }
+
         if (isBuildLOLLIPOP()) {
             //5.0
             LogUtil.v("start scan android 5.0 Le");
@@ -281,20 +287,14 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
      * @param isAutoConn
      * @param bluetoothGattCallback
      */
-    public void scanAndConnect(String mac, final boolean isAutoConn, final BleToothBleGattCallBack bluetoothGattCallback) {
+    public void scanAndConnect(final String mac, final boolean isAutoConn, final BleToothBleGattCallBack bluetoothGattCallback) {
 
         if (mac == null || mac.split(":").length != 6) {
             throw new IllegalArgumentException("MAC is null or error! ");
         }
-
-        startScan(new BleScanResultMacCallback(3000, mac) {
+        startScan(new SimpleBleScanResultCallback(new BleScanCallBack(3000) {
             @Override
-            protected void onNotifyBleToothDeviceRssi(int position, int rssi) {
-
-            }
-
-            @Override
-            protected void onScanDevicesData(List<BleDevice> bleDevices) {
+            public void onScanDevicesData(List<BleDevice> bleDevices) {
                 LogUtil.v("Ble : " + bleDevices);
                 if (bleDevices.size() > 0) {
                     mBleDevice = bleDevices.get(0);
@@ -304,15 +304,22 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
             }
 
             @Override
-            public void setBleToothScanStatus(BleScanStatus status) {
+            public void onScanProcess(float process) {
 
             }
 
             @Override
-            protected void bleToothScanProcess(float process) {
+            public void onScanStatus(BleScanStatus status) {
 
             }
-        });
+
+            @Override
+            public List<BleScanFilter> getScanFilter() {
+                List<BleScanFilter> bleScanFilters = new ArrayList<>();
+                bleScanFilters.add(new BleScanFilter.Builder().setDeviceMac(mac).build());
+                return bleScanFilters;
+            }
+        }));
     }
 
     public BluetoothGatt getmBluetoothGatt() {

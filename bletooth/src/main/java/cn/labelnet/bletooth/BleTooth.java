@@ -195,9 +195,13 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
     public void onScanFinish() {
         LogUtil.v("Over Scan Finish !");
         if (isBuildLOLLIPOP()) {
-            stopScan(leScanCallBack);
+            if (leScanCallBack != null) {
+                stopScan(leScanCallBack);
+            }
         } else {
-            stopScan(scanCallback);
+            if (scanCallback != null) {
+                stopScan(scanCallback);
+            }
         }
     }
 

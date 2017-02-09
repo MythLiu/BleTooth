@@ -78,6 +78,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.btn_bletooth).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, BleToothActivity.class));
+            }
+        });
     }
 
     private static class ScanCallBack extends BleScanResultCallback {
@@ -129,9 +135,10 @@ public class MainActivity extends AppCompatActivity {
 
             //CC2650 SensorTag
             //SimpleBLEPeripheral
+            //小米手机 ： 77:97:A5:75:40:98
             List<BleScanFilter> filters = new ArrayList<>();
             filters.add(new BleScanFilter.Builder()
-                    .setDeviceName("小米手机")
+                    .setDeviceMac("77:97:A5:75:40:98")
                     .build());
             return filters;
         }

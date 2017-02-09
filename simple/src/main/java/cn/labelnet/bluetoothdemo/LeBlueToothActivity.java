@@ -139,7 +139,6 @@ public class LeBlueToothActivity extends AppCompatActivity {
             List<ScanFilter> scanFilters = new ArrayList<>();
             ScanFilter filter1 = new ScanFilter
                     .Builder()
-                    .setDeviceName("CC2650 SensorTag")
                     .build();
             scanFilters.add(filter1);
             return scanFilters;

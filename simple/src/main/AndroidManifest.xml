@@ -14,7 +14,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <service android:name="cn.labelnet.bletooth.core.simple.SimpleBleToothService" />
 
         <activity android:name=".MainActivity">
@@ -25,7 +24,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".LeBlueToothActivity" />
-        <activity android:name=".BleToothActivity"></activity>
+        <activity android:name=".BleToothActivity" />
+        <activity android:name=".SimpleServiceActivity"></activity>
     </application>
 
 </manifest>

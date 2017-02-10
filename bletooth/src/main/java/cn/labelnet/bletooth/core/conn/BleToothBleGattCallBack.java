@@ -3,6 +3,9 @@ package cn.labelnet.bletooth.core.conn;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 
+import java.util.List;
+
+import cn.labelnet.bletooth.core.bean.BleService;
 import cn.labelnet.bletooth.util.LogUtil;
 
 /**
@@ -20,7 +23,7 @@ import cn.labelnet.bletooth.util.LogUtil;
 
 public abstract class BleToothBleGattCallBack extends BluetoothGattCallback {
 
-    private OnConnStatusListener onConnStatusListener;
+    protected OnConnStatusListener onConnStatusListener;
 
     public void setOnConnStatusListener(OnConnStatusListener onConnStatusListener) {
         this.onConnStatusListener = onConnStatusListener;
@@ -74,6 +77,8 @@ public abstract class BleToothBleGattCallBack extends BluetoothGattCallback {
         void onSuccess();
 
         void onTimeOut();
+
+        void onFilterGattService(List<BleService> bleServices);
     }
 
 }

@@ -3,6 +3,7 @@ package cn.labelnet.bletooth;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
@@ -15,17 +16,20 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import cn.labelnet.bletooth.async.AsyncCenter;
-import cn.labelnet.bletooth.core.scan.BleBlueToothTest;
-import cn.labelnet.bletooth.core.bean.BleDevice;
-import cn.labelnet.bletooth.core.conn.BleConnStatus;
-import cn.labelnet.bletooth.core.conn.BleToothBleGattCallBack;
-import cn.labelnet.bletooth.core.scan.ble.BleToothBleScanCallback;
 import cn.labelnet.bletooth.core.BleGattCallback;
 import cn.labelnet.bletooth.core.BleScanCallBack;
+import cn.labelnet.bletooth.core.bean.BleDevice;
+import cn.labelnet.bletooth.core.bean.BleService;
+import cn.labelnet.bletooth.core.conn.BleConnStatus;
+import cn.labelnet.bletooth.core.conn.BleToothBleGattCallBack;
+import cn.labelnet.bletooth.core.scan.BleBlueToothTest;
+import cn.labelnet.bletooth.core.scan.ble.BleToothBleScanCallback;
+import cn.labelnet.bletooth.core.scan.le.BleToothLeScanCallBack;
 import cn.labelnet.bletooth.core.simple.SimpleBleScanResultCallback;
 import cn.labelnet.bletooth.core.simple.SimpleLeScanResultCallBack;
 import cn.labelnet.bletooth.core.simple.SimpleScanAndConnCallBack;
-import cn.labelnet.bletooth.core.scan.le.BleToothLeScanCallBack;
+import cn.labelnet.bletooth.data.OnOperationListener;
+import cn.labelnet.bletooth.data.write.GattWriteCharacteristicOperation;
 import cn.labelnet.bletooth.util.ClsBleUtil;
 import cn.labelnet.bletooth.util.LogUtil;
 
@@ -64,6 +68,9 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
     private int timeOutCount = 0;
     private AtomicBoolean isAutoConn = new AtomicBoolean(false);
     private BleGattCallback gattCallBack;
+    //bluetooth gatt service filter result
+    List<BleService> bleServices;
+
     //control
     private AtomicBoolean isConnBle = new AtomicBoolean(false);
     private AsyncCenter mAsyncCenter;
@@ -269,6 +276,11 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
         connect(mBleDevice, isAutoConn.get(), gattCallBack);
     }
 
+    @Override
+    public void onFilterGattService(List<BleService> bleServices) {
+        this.bleServices = bleServices;
+    }
+
     /**
      * disconnect, refresh and close bluetooth gatt.
      */
@@ -350,6 +362,10 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
         return mBluetoothAdapter;
     }
 
+    public List<BleService> getBleServices() {
+        return bleServices;
+    }
+
     /**
      * support Android L 5.0
      *
@@ -363,6 +379,17 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
      * ======================================= Operation：read , write notify =====================
      */
 
+    public void writeCharacteristic(BluetoothGattCharacteristic mBluetoothGattCharacteristic, byte... values) {
+        GattWriteCharacteristicOperation writeCharacteristicOperation = new GattWriteCharacteristicOperation(mBluetoothGattCharacteristic, values);
+        writeCharacteristicOperation.setmBluetoothGatt(getBluetoothGatt());
+        writeCharacteristicOperation.setOperationListener(new OnOperationListener() {
+            @Override
+            public void onOperationStatus(OperationStatus status, String msg) {
+                LogUtil.v("writeCharacteristic : " + status + " msg : " + msg);
+            }
+        });
+        mAsyncCenter.postRunnable(writeCharacteristicOperation);
+    }
 
 
 

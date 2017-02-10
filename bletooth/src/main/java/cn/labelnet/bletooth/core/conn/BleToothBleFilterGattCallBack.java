@@ -38,6 +38,7 @@ public abstract class BleToothBleFilterGattCallBack extends BleToothBleGattCallB
     @Override
     public void OnFilterBleService(List<BleService> bleServices) {
         onFilterBluetoothGattResult(bleServices);
+        onConnStatusListener.onFilterGattService(bleServices);
     }
 
     @Override

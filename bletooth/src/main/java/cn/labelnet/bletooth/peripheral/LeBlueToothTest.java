@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import cn.labelnet.bletooth.core.bean.BleDevice;
+import cn.labelnet.bletooth.core.bean.BleService;
 import cn.labelnet.bletooth.core.conn.BleConnStatus;
 import cn.labelnet.bletooth.core.conn.BleToothBleGattCallBack;
 import cn.labelnet.bletooth.core.scan.BleBlueToothTest;
@@ -238,6 +239,11 @@ public class LeBlueToothTest implements BleToothLeScanCallBack.OnScanCompleteLis
         }
         disconnect();
         connect(mBleDevice, isAutoConn.get(), gattCallBack);
+    }
+
+    @Override
+    public void onFilterGattService(List<BleService> bleServices) {
+
     }
 
     /**

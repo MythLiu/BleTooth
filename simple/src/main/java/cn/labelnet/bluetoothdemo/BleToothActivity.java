@@ -5,11 +5,11 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,7 +20,6 @@ import cn.labelnet.bletooth.core.bean.BleCharacteristic;
 import cn.labelnet.bletooth.core.bean.BleDevice;
 import cn.labelnet.bletooth.core.bean.BleService;
 import cn.labelnet.bletooth.core.conn.BleConnStatus;
-import cn.labelnet.bletooth.core.scan.ble.BleScanFilter;
 import cn.labelnet.bletooth.core.scan.ble.BleScanStatus;
 import cn.labelnet.bletooth.core.simple.SimpleScanAndConnCallBack;
 import cn.labelnet.bletooth.data.filter.BleBluetoothGattStatus;
@@ -34,7 +33,8 @@ public class BleToothActivity extends AppCompatActivity {
 
     private static BleTooth bleTooth;
     private ScanCallBack scanCallBack;
-    private static List<BleService> bleServices;
+    private List<BleService> bleServices;
+    private boolean isEnable = false;
 
 
     @Override
@@ -107,22 +107,60 @@ public class BleToothActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //write characteristic
-                if (bleServices == null || bleServices.size() == 0) {
-                    LogUtil.e("bleServices not found data !");
-                    return;
-                }
-                BleService bleService = bleServices.get(0);
-                List<BleCharacteristic> characteristics = bleService.getCharacteristics();
-
-                if (characteristics == null || characteristics.size() == 0) {
-                    LogUtil.e("bleServices not found characteristics !");
-                    return;
-                }
-                byte b = 0x00;
-                bleTooth.writeCharacteristic(characteristics.get(0).getCharacteristic(), b);
+                write();
             }
         });
 
+        findViewById(R.id.btn_ble_chara_enable_notify).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                notification();
+            }
+        });
+
+    }
+
+    private void notification() {
+        List<BleCharacteristic> characteristics = getBleCharacteristics();
+        if (characteristics == null) return;
+        if (isEnable) {
+            bleTooth.enableNotificationCharacteristic(characteristics.get(0).getCharacteristic(), "00002902-0000-1000-8000-00805f9b34fb");
+        } else {
+            bleTooth.disableNotificationCharacteristic(characteristics.get(0).getCharacteristic(), "00002902-0000-1000-8000-00805f9b34fb");
+        }
+    }
+
+    private void write() {
+
+        List<BleCharacteristic> characteristics = getBleCharacteristics();
+        if (characteristics == null) return;
+
+        byte disabel[] = new byte[]{0x00, 0x00};
+        byte enable[] = new byte[]{0x7F, 0x00};
+        if (isEnable) {
+            bleTooth.writeCharacteristic(characteristics.get(1).getCharacteristic(), disabel);
+            isEnable=false;
+        } else {
+            bleTooth.writeCharacteristic(characteristics.get(1).getCharacteristic(), enable);
+            isEnable=true;
+        }
+    }
+
+    @Nullable
+    private List<BleCharacteristic> getBleCharacteristics() {
+        bleServices = bleTooth.getBleServices();
+        if (bleServices == null || bleServices.size() == 0) {
+            LogUtil.e("bleServices not found data !");
+            return null;
+        }
+        BleService bleService = bleServices.get(0);
+        List<BleCharacteristic> characteristics = bleService.getCharacteristics();
+
+        if (characteristics == null || characteristics.size() == 0) {
+            LogUtil.e("bleServices not found characteristics !");
+            return null;
+        }
+        return characteristics;
     }
 
     private static class ScanCallBack extends BleScanCallBack {
@@ -202,22 +240,19 @@ public class BleToothActivity extends AppCompatActivity {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             super.onCharacteristicChanged(gatt, characteristic);
-            LogUtil.v("onCharacteristicChanged 收到的数据 ： " + characteristic.getValue());
+            LogUtil.v("onCharacteristicChanged 收到的数据 ： " + Arrays.toString(characteristic.getValue()));
         }
 
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicWrite(gatt, characteristic, status);
-            LogUtil.v("Write : " + characteristic.getValue());
+            LogUtil.v("Write : " + Arrays.toString(characteristic.getValue()));
             LogUtil.v("Write : statue " + status);
         }
 
         @Override
         protected void onFilterBluetoothGattStatus(BleBluetoothGattStatus status, String msg) {
             LogUtil.v("================: " + status + "msg : " + msg);
-            if (status.equals(BleBluetoothGattStatus.InitFilterSuccess) || status.equals(BleBluetoothGattStatus.InitAllSuccess)) {
-                bleServices = bleTooth.getBleServices();
-            }
         }
 
         public static void printServices(BluetoothGatt gatt) {

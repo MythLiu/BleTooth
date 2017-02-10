@@ -1,4 +1,4 @@
-package cn.labelnet.bletooth.ble.scan;
+package cn.labelnet.bletooth.core.scan.ble;
 
 /**
  * @Package cn.labelnet.bletooth.core

@@ -1,4 +1,4 @@
-package cn.labelnet.bletooth.le.scan;
+package cn.labelnet.bletooth.core.scan.le;
 
 import android.bluetooth.le.ScanResult;
 
@@ -9,8 +9,6 @@ import cn.labelnet.bletooth.core.bean.BleDevice;
 import cn.labelnet.bletooth.util.LogUtil;
 
 /**
- * @Package cn.labelnet.bletooth.le.scan
- * <p>
  * @Author yuan
  * @Blog http://blog.csdn.net/lablenet
  * <p>

@@ -1,8 +1,6 @@
-package cn.labelnet.bletooth.le.scan;
+package cn.labelnet.bletooth.core.scan.le;
 
 /**
- * @Package cn.labelnet.bletooth.le.scan
- * <p>
  * @Author yuan
  * @Blog http://blog.csdn.net/lablenet
  * <p>

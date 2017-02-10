@@ -9,11 +9,11 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.labelnet.bletooth.ble.BleBlueToothTest;
+import cn.labelnet.bletooth.core.scan.BleBlueToothTest;
 import cn.labelnet.bletooth.core.bean.BleDevice;
-import cn.labelnet.bletooth.ble.scan.BleScanResultCallback;
-import cn.labelnet.bletooth.ble.scan.BleScanStatus;
-import cn.labelnet.bletooth.ble.scan.BleScanFilter;
+import cn.labelnet.bletooth.core.scan.ble.BleScanResultCallback;
+import cn.labelnet.bletooth.core.scan.ble.BleScanStatus;
+import cn.labelnet.bletooth.core.scan.ble.BleScanFilter;
 import cn.labelnet.bletooth.util.LogUtil;
 import cn.labelnet.bluetoothdemo.callback.ConnCallBack;
 

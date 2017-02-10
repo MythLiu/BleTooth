@@ -2,11 +2,11 @@ package cn.labelnet.bletooth.core.simple;
 
 import java.util.List;
 
-import cn.labelnet.bletooth.ble.scan.BleScanFilter;
+import cn.labelnet.bletooth.core.scan.ble.BleScanFilter;
 import cn.labelnet.bletooth.core.BleScanCallBack;
 import cn.labelnet.bletooth.core.bean.BleDevice;
-import cn.labelnet.bletooth.ble.scan.BleScanResultCallback;
-import cn.labelnet.bletooth.ble.scan.BleScanStatus;
+import cn.labelnet.bletooth.core.scan.ble.BleScanResultCallback;
+import cn.labelnet.bletooth.core.scan.ble.BleScanStatus;
 
 /**
  * @Package cn.labelnet.bletooth.core

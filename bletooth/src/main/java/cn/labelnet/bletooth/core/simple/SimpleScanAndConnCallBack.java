@@ -3,10 +3,10 @@ package cn.labelnet.bletooth.core.simple;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.labelnet.bletooth.ble.scan.BleScanFilter;
+import cn.labelnet.bletooth.core.scan.ble.BleScanFilter;
 import cn.labelnet.bletooth.core.BleScanCallBack;
 import cn.labelnet.bletooth.core.bean.BleDevice;
-import cn.labelnet.bletooth.ble.scan.BleScanStatus;
+import cn.labelnet.bletooth.core.scan.ble.BleScanStatus;
 import cn.labelnet.bletooth.util.LogUtil;
 
 /**

@@ -1,4 +1,4 @@
-package cn.labelnet.bletooth.ble;
+package cn.labelnet.bletooth.core.scan;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -15,10 +15,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import cn.labelnet.bletooth.core.bean.BleDevice;
 import cn.labelnet.bletooth.core.conn.BleConnStatus;
 import cn.labelnet.bletooth.core.conn.BleToothBleGattCallBack;
-import cn.labelnet.bletooth.ble.scan.BleScanStatus;
-import cn.labelnet.bletooth.ble.scan.BleToothBleScanCallback;
 import cn.labelnet.bletooth.core.BleScanCallBack;
-import cn.labelnet.bletooth.ble.scan.BleScanFilter;
+import cn.labelnet.bletooth.core.scan.ble.BleScanFilter;
+import cn.labelnet.bletooth.core.scan.ble.BleScanStatus;
+import cn.labelnet.bletooth.core.scan.ble.BleToothBleScanCallback;
 import cn.labelnet.bletooth.core.simple.SimpleBleScanResultCallback;
 import cn.labelnet.bletooth.util.ClsBleUtil;
 import cn.labelnet.bletooth.util.LogUtil;

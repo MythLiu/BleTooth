@@ -15,17 +15,17 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import cn.labelnet.bletooth.async.AsyncCenter;
-import cn.labelnet.bletooth.ble.BleBlueToothTest;
+import cn.labelnet.bletooth.core.scan.BleBlueToothTest;
 import cn.labelnet.bletooth.core.bean.BleDevice;
 import cn.labelnet.bletooth.core.conn.BleConnStatus;
 import cn.labelnet.bletooth.core.conn.BleToothBleGattCallBack;
-import cn.labelnet.bletooth.ble.scan.BleToothBleScanCallback;
+import cn.labelnet.bletooth.core.scan.ble.BleToothBleScanCallback;
 import cn.labelnet.bletooth.core.BleGattCallback;
 import cn.labelnet.bletooth.core.BleScanCallBack;
 import cn.labelnet.bletooth.core.simple.SimpleBleScanResultCallback;
 import cn.labelnet.bletooth.core.simple.SimpleLeScanResultCallBack;
 import cn.labelnet.bletooth.core.simple.SimpleScanAndConnCallBack;
-import cn.labelnet.bletooth.le.scan.BleToothLeScanCallBack;
+import cn.labelnet.bletooth.core.scan.le.BleToothLeScanCallBack;
 import cn.labelnet.bletooth.util.ClsBleUtil;
 import cn.labelnet.bletooth.util.LogUtil;
 

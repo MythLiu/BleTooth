@@ -1,8 +1,7 @@
-package cn.labelnet.bletooth.le.scan;
+package cn.labelnet.bletooth.core.scan.le;
 
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
-import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.os.CountDownTimer;
 
@@ -12,8 +11,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import cn.labelnet.bletooth.exception.ScanTimeOutException;
 
 /**
- * @Package cn.labelnet.bletooth.le.scan
- * <p>
  * @Author yuan
  * @Blog http://blog.csdn.net/lablenet
  * <p>

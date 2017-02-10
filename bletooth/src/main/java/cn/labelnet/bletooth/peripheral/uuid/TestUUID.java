@@ -1,11 +1,11 @@
-package cn.labelnet.bletooth.le.uuid;
+package cn.labelnet.bletooth.peripheral.uuid;
 
 import java.util.UUID;
 
 import static java.util.UUID.fromString;
 
 /**
- * @Package cn.labelnet.bletooth.le.uuid
+ * @Package cn.labelnet.bletooth.peripheral.uuid
  * <p>
  * @Author yuan
  * @Blog http://blog.csdn.net/lablenet

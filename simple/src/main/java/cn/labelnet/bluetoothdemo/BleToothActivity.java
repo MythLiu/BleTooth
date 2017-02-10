@@ -14,16 +14,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import cn.labelnet.bletooth.BleTooth;
-import cn.labelnet.bletooth.ble.scan.BleScanStatus;
+import cn.labelnet.bletooth.core.scan.ble.BleScanStatus;
 import cn.labelnet.bletooth.core.BleGattCallback;
 import cn.labelnet.bletooth.core.BleScanCallBack;
-import cn.labelnet.bletooth.ble.scan.BleScanFilter;
+import cn.labelnet.bletooth.core.scan.ble.BleScanFilter;
 import cn.labelnet.bletooth.core.simple.SimpleScanAndConnCallBack;
 import cn.labelnet.bletooth.core.bean.BleDevice;
 import cn.labelnet.bletooth.core.bean.BleService;
 import cn.labelnet.bletooth.core.conn.BleConnStatus;
 import cn.labelnet.bletooth.data.filter.BleBluetoothGattStatus;
-import cn.labelnet.bletooth.data.filter.BleBluetoothUUIDFilter;
 import cn.labelnet.bletooth.util.LogUtil;
 
 public class BleToothActivity extends AppCompatActivity {

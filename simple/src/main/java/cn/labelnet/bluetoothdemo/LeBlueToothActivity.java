@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.labelnet.bletooth.core.bean.BleDevice;
-import cn.labelnet.bletooth.le.LeBlueToothTest;
-import cn.labelnet.bletooth.le.scan.LeScanResultCallBack;
+import cn.labelnet.bletooth.peripheral.LeBlueToothTest;
+import cn.labelnet.bletooth.core.scan.le.LeScanResultCallBack;
 import cn.labelnet.bletooth.util.LogUtil;
 import cn.labelnet.bluetoothdemo.callback.ConnCallBack;
 

@@ -1,4 +1,4 @@
-package cn.labelnet.bletooth.le;
+package cn.labelnet.bletooth.peripheral;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -25,12 +25,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import cn.labelnet.bletooth.ble.BleBlueToothTest;
 import cn.labelnet.bletooth.core.bean.BleDevice;
 import cn.labelnet.bletooth.core.conn.BleConnStatus;
 import cn.labelnet.bletooth.core.conn.BleToothBleGattCallBack;
-import cn.labelnet.bletooth.le.scan.BleToothLeScanCallBack;
-import cn.labelnet.bletooth.le.uuid.TestUUID;
+import cn.labelnet.bletooth.core.scan.BleBlueToothTest;
+import cn.labelnet.bletooth.core.scan.le.BleToothLeScanCallBack;
+import cn.labelnet.bletooth.peripheral.uuid.TestUUID;
 import cn.labelnet.bletooth.util.ClsBleUtil;
 import cn.labelnet.bletooth.util.LogUtil;
 

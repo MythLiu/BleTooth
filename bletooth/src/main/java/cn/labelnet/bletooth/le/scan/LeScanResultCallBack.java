@@ -66,13 +66,16 @@ public abstract class LeScanResultCallBack extends BleToothLeScanCallBack {
     @Override
     public void onScanResult(int callbackType, ScanResult result) {
         super.onScanResult(callbackType, result);
-        LogUtil.v("DeviceName : " + result.getDevice().getName() + " DeviceMac: " + result.getDevice().getAddress());
-        BleDevice bleDevice = new BleDevice();
-        bleDevice.setBluetoothDevice(result.getDevice());
-        bleDevice.setDeviceName(result.getDevice().getName());
-        bleDevice.setDeviceMac(result.getDevice().getAddress());
-        bleDevice.setRssi(result.getRssi());
-        addDevice(bleDevice, result.getRssi());
+        String deviceName = result.getDevice().getName();
+        if (deviceName != null && deviceName.trim().length() > 0) {
+            LogUtil.v("DeviceName : " + deviceName + " DeviceMac: " + result.getDevice().getAddress());
+            BleDevice bleDevice = new BleDevice();
+            bleDevice.setBluetoothDevice(result.getDevice());
+            bleDevice.setDeviceName(result.getDevice().getName());
+            bleDevice.setDeviceMac(result.getDevice().getAddress());
+            bleDevice.setRssi(result.getRssi());
+            addDevice(bleDevice, result.getRssi());
+        }
     }
 
     @Deprecated

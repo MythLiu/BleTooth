@@ -22,9 +22,9 @@ import cn.labelnet.bletooth.core.conn.BleToothBleGattCallBack;
 import cn.labelnet.bletooth.ble.scan.BleToothBleScanCallback;
 import cn.labelnet.bletooth.core.BleGattCallback;
 import cn.labelnet.bletooth.core.BleScanCallBack;
-import cn.labelnet.bletooth.core.SimpleBleScanResultCallback;
-import cn.labelnet.bletooth.core.SimpleLeScanResultCallBack;
-import cn.labelnet.bletooth.core.SimpleScanAndConnCallBack;
+import cn.labelnet.bletooth.core.simple.SimpleBleScanResultCallback;
+import cn.labelnet.bletooth.core.simple.SimpleLeScanResultCallBack;
+import cn.labelnet.bletooth.core.simple.SimpleScanAndConnCallBack;
 import cn.labelnet.bletooth.le.scan.BleToothLeScanCallBack;
 import cn.labelnet.bletooth.util.ClsBleUtil;
 import cn.labelnet.bletooth.util.LogUtil;
@@ -350,13 +350,6 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
         return mBluetoothAdapter;
     }
 
-
-    //==================================== READ ===================================================
-
-
-
-
-
     /**
      * support Android L 5.0
      *
@@ -365,5 +358,12 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
     private boolean isBuildLOLLIPOP() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
+
+    /**
+     * ======================================= Operation：read , write notify =====================
+     */
+
+
+
 
 }

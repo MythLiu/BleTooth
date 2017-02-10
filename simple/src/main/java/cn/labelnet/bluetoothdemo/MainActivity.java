@@ -13,7 +13,7 @@ import cn.labelnet.bletooth.ble.BleBlueToothTest;
 import cn.labelnet.bletooth.core.bean.BleDevice;
 import cn.labelnet.bletooth.ble.scan.BleScanResultCallback;
 import cn.labelnet.bletooth.ble.scan.BleScanStatus;
-import cn.labelnet.bletooth.core.BleScanFilter;
+import cn.labelnet.bletooth.ble.scan.BleScanFilter;
 import cn.labelnet.bletooth.util.LogUtil;
 import cn.labelnet.bluetoothdemo.callback.ConnCallBack;
 

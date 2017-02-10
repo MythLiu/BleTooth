@@ -17,8 +17,8 @@ import cn.labelnet.bletooth.BleTooth;
 import cn.labelnet.bletooth.ble.scan.BleScanStatus;
 import cn.labelnet.bletooth.core.BleGattCallback;
 import cn.labelnet.bletooth.core.BleScanCallBack;
-import cn.labelnet.bletooth.core.BleScanFilter;
-import cn.labelnet.bletooth.core.SimpleScanAndConnCallBack;
+import cn.labelnet.bletooth.ble.scan.BleScanFilter;
+import cn.labelnet.bletooth.core.simple.SimpleScanAndConnCallBack;
 import cn.labelnet.bletooth.core.bean.BleDevice;
 import cn.labelnet.bletooth.core.bean.BleService;
 import cn.labelnet.bletooth.core.conn.BleConnStatus;
@@ -159,13 +159,13 @@ public class BleToothActivity extends AppCompatActivity {
             printServices(gatt);
         }
 
-        @Override
-        protected BleBluetoothUUIDFilter onFilterBluetoothGattService(BleBluetoothUUIDFilter.Builder builder) {
-            builder.startBuilderService()
-                    .addService("00001801-0000-1000-8000-00805f9b34fb")
-                    .endBuilderService();//must be endBuilderService!!!!
-            return builder.build();
-        }
+//        @Override
+//        protected BleBluetoothUUIDFilter onFilterBluetoothGattService(BleBluetoothUUIDFilter.Builder builder) {
+//            builder.startBuilderService()
+//                    .addService("00001801-0000-1000-8000-00805f9b34fb")
+//                    .endBuilderService();//must be endBuilderService!!!!
+//            return builder.build();
+//        }
 
         @Override
         protected void onFilterBluetoothGattResult(List<BleService> bleServices) {

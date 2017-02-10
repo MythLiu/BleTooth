@@ -18,8 +18,8 @@ import cn.labelnet.bletooth.core.conn.BleToothBleGattCallBack;
 import cn.labelnet.bletooth.ble.scan.BleScanStatus;
 import cn.labelnet.bletooth.ble.scan.BleToothBleScanCallback;
 import cn.labelnet.bletooth.core.BleScanCallBack;
-import cn.labelnet.bletooth.core.BleScanFilter;
-import cn.labelnet.bletooth.core.SimpleBleScanResultCallback;
+import cn.labelnet.bletooth.ble.scan.BleScanFilter;
+import cn.labelnet.bletooth.core.simple.SimpleBleScanResultCallback;
 import cn.labelnet.bletooth.util.ClsBleUtil;
 import cn.labelnet.bletooth.util.LogUtil;
 

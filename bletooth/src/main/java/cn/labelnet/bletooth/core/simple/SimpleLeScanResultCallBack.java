@@ -1,10 +1,11 @@
-package cn.labelnet.bletooth.core;
+package cn.labelnet.bletooth.core.simple;
 
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
 
 import java.util.List;
 
+import cn.labelnet.bletooth.core.BleScanCallBack;
 import cn.labelnet.bletooth.core.bean.BleDevice;
 import cn.labelnet.bletooth.ble.scan.BleScanStatus;
 import cn.labelnet.bletooth.le.scan.LeScanResultCallBack;

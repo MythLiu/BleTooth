@@ -435,6 +435,10 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
         postOperation(onOperationListener, writeDescriptorOperation);
     }
 
+    public void writeDescriptor(BluetoothGattDescriptor mBluetoothGattDescriptor, byte... values) {
+        writeDescriptor(mBluetoothGattDescriptor, null, values);
+    }
+
     /**
      * read Characteristic
      *
@@ -456,6 +460,10 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
 //        postOperation(onOperationListener, readCharacteristicOperation);
     }
 
+    public void readCharacteristic(BluetoothGattCharacteristic mBluetoothGattCharacteristic) {
+        readCharacteristic(mBluetoothGattCharacteristic, null);
+    }
+
     /**
      * read Descriptor
      *
@@ -467,6 +475,9 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
         postOperation(onOperationListener, readDescriptorOpertation);
     }
 
+    public void readDescriptor(BluetoothGattDescriptor mBluetoothGattDescriptor) {
+        readDescriptor(mBluetoothGattDescriptor, null);
+    }
 
     /**
      * read rssi
@@ -476,6 +487,10 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
     public void readRemoteRSSI(OnOperationListener onOperationListener) {
         GattReadRemoteRSSI readRemoteRSSI = new GattReadRemoteRSSI();
         postOperation(onOperationListener, readRemoteRSSI);
+    }
+
+    public void readRemoteRSSI() {
+        readRemoteRSSI(null);
     }
 
 

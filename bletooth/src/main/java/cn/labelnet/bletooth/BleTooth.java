@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
@@ -28,8 +29,15 @@ import cn.labelnet.bletooth.core.scan.le.BleToothLeScanCallBack;
 import cn.labelnet.bletooth.core.simple.SimpleBleScanResultCallback;
 import cn.labelnet.bletooth.core.simple.SimpleLeScanResultCallBack;
 import cn.labelnet.bletooth.core.simple.SimpleScanAndConnCallBack;
+import cn.labelnet.bletooth.data.BaseOperation;
 import cn.labelnet.bletooth.data.OnOperationListener;
+import cn.labelnet.bletooth.data.notify.GattNotifyCharacteristicOperation;
+import cn.labelnet.bletooth.data.notify.GattNotifyDescriptorOperation;
+import cn.labelnet.bletooth.data.read.GattReadCharacteristicOperation;
+import cn.labelnet.bletooth.data.read.GattReadDescriptorOpertation;
+import cn.labelnet.bletooth.data.read.GattReadRemoteRSSI;
 import cn.labelnet.bletooth.data.write.GattWriteCharacteristicOperation;
+import cn.labelnet.bletooth.data.write.GattWriteDescriptorOperation;
 import cn.labelnet.bletooth.util.ClsBleUtil;
 import cn.labelnet.bletooth.util.LogUtil;
 
@@ -379,18 +387,206 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
      * ======================================= Operation：read , write notify =====================
      */
 
-    public void writeCharacteristic(BluetoothGattCharacteristic mBluetoothGattCharacteristic, byte... values) {
-        GattWriteCharacteristicOperation writeCharacteristicOperation = new GattWriteCharacteristicOperation(mBluetoothGattCharacteristic, values);
-        writeCharacteristicOperation.setmBluetoothGatt(getBluetoothGatt());
-        writeCharacteristicOperation.setOperationListener(new OnOperationListener() {
+    /**
+     * post operation : do write read notify
+     *
+     * @param onOperationListener
+     * @param baseOperation
+     */
+    private synchronized void postOperation(final OnOperationListener onOperationListener, BaseOperation baseOperation) {
+        baseOperation.setmBluetoothGatt(getBluetoothGatt());
+        baseOperation.setOperationListener(new OnOperationListener() {
             @Override
             public void onOperationStatus(OperationStatus status, String msg) {
-                LogUtil.v("writeCharacteristic : " + status + " msg : " + msg);
+                LogUtil.v("do operation : status" + status + " >> msg : " + msg);
+                if (onOperationListener != null) {
+                    onOperationListener.onOperationStatus(status, msg);
+                }
             }
         });
-        mAsyncCenter.postRunnable(writeCharacteristicOperation);
+        mAsyncCenter.postRunnable(baseOperation);
     }
 
+    /**
+     * write Characteristic
+     *
+     * @param mBluetoothGattCharacteristic need write
+     * @param onOperationListener          status listener
+     * @param values                       values( byte[] )
+     */
+    public void writeCharacteristic(BluetoothGattCharacteristic mBluetoothGattCharacteristic, OnOperationListener onOperationListener, byte... values) {
+        GattWriteCharacteristicOperation writeCharacteristicOperation = new GattWriteCharacteristicOperation(mBluetoothGattCharacteristic, values);
+        postOperation(onOperationListener, writeCharacteristicOperation);
+    }
+
+    public void writeCharacteristic(BluetoothGattCharacteristic mBluetoothGattCharacteristic, byte... values) {
+        writeCharacteristic(mBluetoothGattCharacteristic, null, values);
+    }
+
+    /**
+     * write Descriptor
+     *
+     * @param mBluetoothGattDescriptor need write
+     * @param onOperationListener      status listener
+     * @param values                   values(byte[])
+     */
+    public void writeDescriptor(BluetoothGattDescriptor mBluetoothGattDescriptor, OnOperationListener onOperationListener, byte... values) {
+        GattWriteDescriptorOperation writeDescriptorOperation = new GattWriteDescriptorOperation(mBluetoothGattDescriptor, values);
+        postOperation(onOperationListener, writeDescriptorOperation);
+    }
+
+    /**
+     * read Characteristic
+     *
+     * @param mBluetoothGattCharacteristic need read
+     * @param onOperationListener          status listener
+     */
+    public void readCharacteristic(BluetoothGattCharacteristic mBluetoothGattCharacteristic, final OnOperationListener onOperationListener) {
+        final GattReadCharacteristicOperation readCharacteristicOperation = new GattReadCharacteristicOperation(mBluetoothGattCharacteristic);
+        //1. disable notification
+        disableNotificationCharacteristic(mBluetoothGattCharacteristic, new OnOperationListener() {
+            @Override
+            public void onOperationStatus(OperationStatus status, String msg) {
+                if(status.equals(OperationStatus.notifySuccess)){
+                    //2. readCharacteristic
+                    postOperation(onOperationListener, readCharacteristicOperation);
+                }
+            }
+        });
+//        postOperation(onOperationListener, readCharacteristicOperation);
+    }
+
+    /**
+     * read Descriptor
+     *
+     * @param mBluetoothGattDescriptor need read Descriptor
+     * @param onOperationListener      status listener
+     */
+    public void readDescriptor(BluetoothGattDescriptor mBluetoothGattDescriptor, OnOperationListener onOperationListener) {
+        GattReadDescriptorOpertation readDescriptorOpertation = new GattReadDescriptorOpertation(mBluetoothGattDescriptor);
+        postOperation(onOperationListener, readDescriptorOpertation);
+    }
+
+
+    /**
+     * read rssi
+     *
+     * @param onOperationListener
+     */
+    public void readRemoteRSSI(OnOperationListener onOperationListener) {
+        GattReadRemoteRSSI readRemoteRSSI = new GattReadRemoteRSSI();
+        postOperation(onOperationListener, readRemoteRSSI);
+    }
+
+
+    /**
+     * setNotification for Characteristic
+     *
+     * @param mBluetoothGattCharacteristic need characteristic
+     * @param enable                       open
+     * @param uuid                         Descriptor UUID ENABLE_NOTIFICATION
+     * @param onOperationListener          status listener
+     */
+    private void setNotificationCharacteristic(BluetoothGattCharacteristic mBluetoothGattCharacteristic
+            , boolean enable, String uuid, OnOperationListener onOperationListener) {
+        GattNotifyCharacteristicOperation notifyCharacteristicOperation = null;
+        if (uuid == null || uuid.length() == 0) {
+            notifyCharacteristicOperation = new GattNotifyCharacteristicOperation(mBluetoothGattCharacteristic, enable);
+        } else {
+            notifyCharacteristicOperation = new GattNotifyCharacteristicOperation(mBluetoothGattCharacteristic, enable, uuid);
+        }
+        postOperation(onOperationListener, notifyCharacteristicOperation);
+    }
+
+    /**
+     * open Characteristic notification
+     *
+     * @param mBluetoothGattCharacteristic need
+     * @param uuid                         descriptor uuid
+     * @param onOperationListener          status
+     */
+    public void enableNotificationCharacteristic(BluetoothGattCharacteristic mBluetoothGattCharacteristic
+            , String uuid, OnOperationListener onOperationListener) {
+        setNotificationCharacteristic(mBluetoothGattCharacteristic, true, uuid, onOperationListener);
+    }
+
+    public void enableNotificationCharacteristic(BluetoothGattCharacteristic mBluetoothGattCharacteristic
+            , String uuid) {
+        enableNotificationCharacteristic(mBluetoothGattCharacteristic, uuid, null);
+    }
+
+    public void enableNotificationCharacteristic(BluetoothGattCharacteristic mBluetoothGattCharacteristic, OnOperationListener onOperationListener) {
+        enableNotificationCharacteristic(mBluetoothGattCharacteristic, null, onOperationListener);
+    }
+
+    public void enableNotificationCharacteristic(BluetoothGattCharacteristic mBluetoothGattCharacteristic) {
+        enableNotificationCharacteristic(mBluetoothGattCharacteristic, null, null);
+    }
+
+    /**
+     * close Characteristic notification
+     *
+     * @param mBluetoothGattCharacteristic need
+     * @param uuid                         descriptor uuid
+     * @param onOperationListener          status listener
+     */
+    public void disableNotificationCharacteristic(BluetoothGattCharacteristic mBluetoothGattCharacteristic
+            , String uuid, OnOperationListener onOperationListener) {
+        setNotificationCharacteristic(mBluetoothGattCharacteristic, false, uuid, onOperationListener);
+    }
+
+    public void disableNotificationCharacteristic(BluetoothGattCharacteristic mBluetoothGattCharacteristic
+            , String uuid) {
+        disableNotificationCharacteristic(mBluetoothGattCharacteristic, uuid, null);
+    }
+
+    public void disableNotificationCharacteristic(BluetoothGattCharacteristic mBluetoothGattCharacteristic, OnOperationListener onOperationListener) {
+        disableNotificationCharacteristic(mBluetoothGattCharacteristic, null, onOperationListener);
+    }
+
+    public void disableNotificationCharacteristic(BluetoothGattCharacteristic mBluetoothGattCharacteristic) {
+        disableNotificationCharacteristic(mBluetoothGattCharacteristic, null, null);
+    }
+
+    /**
+     * setNotification Descriptor enable/disable
+     *
+     * @param mBluetoothGattDescriptor need
+     * @param enable                   open
+     * @param onOperationListener      status
+     */
+    private void setNotificationDescriptor(BluetoothGattDescriptor mBluetoothGattDescriptor, boolean enable, OnOperationListener onOperationListener) {
+        GattNotifyDescriptorOperation gattNotifyDescriptorOperation = new GattNotifyDescriptorOperation(mBluetoothGattDescriptor, enable);
+        postOperation(onOperationListener, gattNotifyDescriptorOperation);
+    }
+
+    /**
+     * enable Descriptor Notification
+     *
+     * @param mBluetoothGattDescriptor need
+     * @param onOperationListener      status
+     */
+    public void enableNotificationDescriptor(BluetoothGattDescriptor mBluetoothGattDescriptor, OnOperationListener onOperationListener) {
+        setNotificationDescriptor(mBluetoothGattDescriptor, true, onOperationListener);
+    }
+
+    public void enableNotificationDescriptor(BluetoothGattDescriptor mBluetoothGattDescriptor) {
+        enableNotificationDescriptor(mBluetoothGattDescriptor, null);
+    }
+
+    /**
+     * disable Descriptor Notification
+     *
+     * @param mBluetoothGattDescriptor need
+     * @param onOperationListener      status
+     */
+    public void disableNotificationDescriptor(BluetoothGattDescriptor mBluetoothGattDescriptor, OnOperationListener onOperationListener) {
+        setNotificationDescriptor(mBluetoothGattDescriptor, false, onOperationListener);
+    }
+
+    public void disableNotificationDescriptor(BluetoothGattDescriptor mBluetoothGattDescriptor) {
+        disableNotificationDescriptor(mBluetoothGattDescriptor, null);
+    }
 
 
 }

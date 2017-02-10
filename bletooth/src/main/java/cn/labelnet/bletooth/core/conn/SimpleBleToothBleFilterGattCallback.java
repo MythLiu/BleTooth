@@ -1,9 +1,9 @@
-package cn.labelnet.bletooth.ble.conn;
+package cn.labelnet.bletooth.core.conn;
 
 import cn.labelnet.bletooth.data.filter.BleBluetoothUUIDFilter;
 
 /**
- * @Package cn.labelnet.bletooth.ble.conn
+ * @Package cn.labelnet.bletooth.core.conn
  * <p>
  * @Author yuan
  * @Blog http://blog.csdn.net/lablenet

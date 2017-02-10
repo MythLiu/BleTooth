@@ -25,10 +25,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import cn.labelnet.bletooth.ble.BleBlueTooth;
-import cn.labelnet.bletooth.ble.bean.BleDevice;
-import cn.labelnet.bletooth.ble.conn.BleConnStatus;
-import cn.labelnet.bletooth.ble.conn.BleToothBleGattCallBack;
+import cn.labelnet.bletooth.ble.BleBlueToothTest;
+import cn.labelnet.bletooth.core.bean.BleDevice;
+import cn.labelnet.bletooth.core.conn.BleConnStatus;
+import cn.labelnet.bletooth.core.conn.BleToothBleGattCallBack;
 import cn.labelnet.bletooth.le.scan.BleToothLeScanCallBack;
 import cn.labelnet.bletooth.le.uuid.TestUUID;
 import cn.labelnet.bletooth.util.ClsBleUtil;
@@ -44,7 +44,7 @@ import cn.labelnet.bletooth.util.LogUtil;
  * @Desc Desc
  */
 
-public class LeBlueTooth implements BleToothLeScanCallBack.OnScanCompleteListener
+public class LeBlueToothTest implements BleToothLeScanCallBack.OnScanCompleteListener
         , BleToothBleGattCallBack.OnConnStatusListener {
 
     private Context mContext;
@@ -76,7 +76,7 @@ public class LeBlueTooth implements BleToothLeScanCallBack.OnScanCompleteListene
     private BluetoothLeAdvertiser mBluetoothLeAdvertiser;
 
 
-    private static LeBlueTooth mInstance;
+    private static LeBlueToothTest mInstance;
 
     /**
      * init
@@ -84,18 +84,18 @@ public class LeBlueTooth implements BleToothLeScanCallBack.OnScanCompleteListene
      * @param context applicationContext
      * @return instance
      */
-    public static LeBlueTooth getInstance(Context context) {
+    public static LeBlueToothTest getInstance(Context context) {
         if (mInstance == null) {
-            synchronized (BleBlueTooth.class) {
+            synchronized (BleBlueToothTest.class) {
                 if (mInstance == null) {
-                    mInstance = new LeBlueTooth(context);
+                    mInstance = new LeBlueToothTest(context);
                 }
             }
         }
         return mInstance;
     }
 
-    public LeBlueTooth(Context context) {
+    public LeBlueToothTest(Context context) {
         this.mContext = context.getApplicationContext();
         initBlueTooth();
     }

@@ -14,11 +14,13 @@ import android.os.Build;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import cn.labelnet.bletooth.ble.BleBlueTooth;
-import cn.labelnet.bletooth.ble.bean.BleDevice;
-import cn.labelnet.bletooth.ble.conn.BleConnStatus;
-import cn.labelnet.bletooth.ble.conn.BleToothBleGattCallBack;
+import cn.labelnet.bletooth.async.AsyncCenter;
+import cn.labelnet.bletooth.ble.BleBlueToothTest;
+import cn.labelnet.bletooth.core.bean.BleDevice;
+import cn.labelnet.bletooth.core.conn.BleConnStatus;
+import cn.labelnet.bletooth.core.conn.BleToothBleGattCallBack;
 import cn.labelnet.bletooth.ble.scan.BleToothBleScanCallback;
+import cn.labelnet.bletooth.core.BleGattCallback;
 import cn.labelnet.bletooth.core.BleScanCallBack;
 import cn.labelnet.bletooth.core.SimpleBleScanResultCallback;
 import cn.labelnet.bletooth.core.SimpleLeScanResultCallBack;
@@ -42,7 +44,7 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
         , BleToothLeScanCallBack.OnScanCompleteListener
         , BleToothBleGattCallBack.OnConnStatusListener {
 
-    private static final String TAG = BleBlueTooth.class.getSimpleName();
+    private static final String TAG = BleBlueToothTest.class.getSimpleName();
 
     private Context mContext;
 
@@ -61,16 +63,16 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
     private int connCount = 0;
     private int timeOutCount = 0;
     private AtomicBoolean isAutoConn = new AtomicBoolean(false);
-    private BleToothBleGattCallBack gattCallBack;
-
+    private BleGattCallback gattCallBack;
     //control
     private AtomicBoolean isConnBle = new AtomicBoolean(false);
+    private AsyncCenter mAsyncCenter;
 
     private static BleTooth mInstance;
 
     public static BleTooth getInstance(Context context) {
         if (mInstance == null) {
-            synchronized (BleBlueTooth.class) {
+            synchronized (BleBlueToothTest.class) {
                 if (mInstance == null) {
                     mInstance = new BleTooth(context);
                 }
@@ -87,6 +89,7 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
      */
     public BleTooth(Context context) {
         this.mContext = context.getApplicationContext();
+        mAsyncCenter = AsyncCenter.getInstance();
         initBlueTooth();
     }
 
@@ -217,7 +220,7 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
      * @param isAutoConn            isAuto
      * @param bluetoothGattCallback callback
      */
-    public synchronized void connect(BleDevice bleDevice, boolean isAutoConn, BleToothBleGattCallBack bluetoothGattCallback) {
+    public synchronized void connect(BleDevice bleDevice, boolean isAutoConn, BleGattCallback bluetoothGattCallback) {
         if (bleDevice == null) {
             throw new IllegalArgumentException("BleDevice Bean is null!");
         }
@@ -297,7 +300,7 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
      * @param onScanAndConnListener scan listener
      */
     public void scanAndConnect(String mac
-            , final BleToothBleGattCallBack bluetoothGattCallback
+            , final BleGattCallback bluetoothGattCallback
             , SimpleScanAndConnCallBack.OnScanAndConnListener onScanAndConnListener) {
         scanAndConnect(mac, false, bluetoothGattCallback, onScanAndConnListener);
     }
@@ -312,13 +315,13 @@ public class BleTooth implements BleToothBleScanCallback.OnScanCompleteListener
      */
     public void scanAndConnect(final String mac
             , final boolean isAutoConn
-            , final BleToothBleGattCallBack bluetoothGattCallback
+            , final BleGattCallback bluetoothGattCallback
             , SimpleScanAndConnCallBack.OnScanAndConnListener onScanAndConnListener) {
 
         if (mac == null || mac.split(":").length != 6) {
             throw new IllegalArgumentException("MAC is null or error! ");
         }
-
+        this.gattCallBack = bluetoothGattCallback;
         SimpleScanAndConnCallBack scanAndConnCallBack = new SimpleScanAndConnCallBack(mac) {
             @Override
             protected void onConnect(BleDevice bleDevice) {

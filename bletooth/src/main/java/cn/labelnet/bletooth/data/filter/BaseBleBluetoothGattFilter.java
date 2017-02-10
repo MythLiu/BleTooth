@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import cn.labelnet.bletooth.ble.bean.BleCharacteristic;
-import cn.labelnet.bletooth.ble.bean.BleCharacteristicUUID;
-import cn.labelnet.bletooth.ble.bean.BleDescriptor;
-import cn.labelnet.bletooth.ble.bean.BleService;
-import cn.labelnet.bletooth.ble.bean.BleServiceUUID;
+import cn.labelnet.bletooth.core.bean.BleCharacteristic;
+import cn.labelnet.bletooth.core.bean.BleCharacteristicUUID;
+import cn.labelnet.bletooth.core.bean.BleDescriptor;
+import cn.labelnet.bletooth.core.bean.BleService;
+import cn.labelnet.bletooth.core.bean.BleServiceUUID;
 import cn.labelnet.bletooth.util.LogUtil;
 
 /**

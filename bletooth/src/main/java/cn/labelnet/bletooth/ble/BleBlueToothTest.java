@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import cn.labelnet.bletooth.ble.bean.BleDevice;
-import cn.labelnet.bletooth.ble.conn.BleConnStatus;
-import cn.labelnet.bletooth.ble.conn.BleToothBleGattCallBack;
+import cn.labelnet.bletooth.core.bean.BleDevice;
+import cn.labelnet.bletooth.core.conn.BleConnStatus;
+import cn.labelnet.bletooth.core.conn.BleToothBleGattCallBack;
 import cn.labelnet.bletooth.ble.scan.BleScanStatus;
 import cn.labelnet.bletooth.ble.scan.BleToothBleScanCallback;
 import cn.labelnet.bletooth.core.BleScanCallBack;
@@ -35,10 +35,10 @@ import cn.labelnet.bletooth.util.LogUtil;
  * (2)
  */
 
-public class BleBlueTooth implements BleToothBleScanCallback.OnScanCompleteListener
+public class BleBlueToothTest implements BleToothBleScanCallback.OnScanCompleteListener
         , BleToothBleGattCallBack.OnConnStatusListener {
 
-    private static final String TAG = BleBlueTooth.class.getSimpleName();
+    private static final String TAG = BleBlueToothTest.class.getSimpleName();
 
     private Context mContext;
 
@@ -60,13 +60,13 @@ public class BleBlueTooth implements BleToothBleScanCallback.OnScanCompleteListe
     private Handler handler = new Handler(Looper.getMainLooper());
     private AtomicBoolean isConnBle = new AtomicBoolean(false);
 
-    private static BleBlueTooth mInstance;
+    private static BleBlueToothTest mInstance;
 
-    public static BleBlueTooth getInstance(Context context) {
+    public static BleBlueToothTest getInstance(Context context) {
         if (mInstance == null) {
-            synchronized (BleBlueTooth.class) {
+            synchronized (BleBlueToothTest.class) {
                 if (mInstance == null) {
-                    mInstance = new BleBlueTooth(context);
+                    mInstance = new BleBlueToothTest(context);
                 }
             }
         }
@@ -79,7 +79,7 @@ public class BleBlueTooth implements BleToothBleScanCallback.OnScanCompleteListe
      *
      * @param context Application Context
      */
-    public BleBlueTooth(Context context) {
+    public BleBlueToothTest(Context context) {
         this.mContext = context.getApplicationContext();
         initBlueTooth();
     }

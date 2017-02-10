@@ -13,12 +13,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import cn.labelnet.bletooth.BleTooth;
-import cn.labelnet.bletooth.ble.bean.BleDevice;
-import cn.labelnet.bletooth.ble.conn.BleConnStatus;
-import cn.labelnet.bletooth.ble.conn.BleToothBleGattCallBack;
+import cn.labelnet.bletooth.core.bean.BleDevice;
+import cn.labelnet.bletooth.core.bean.BleService;
+import cn.labelnet.bletooth.core.conn.BleConnStatus;
+import cn.labelnet.bletooth.core.conn.BleToothBleFilterGattCallBack;
 import cn.labelnet.bletooth.ble.scan.BleScanStatus;
 import cn.labelnet.bletooth.core.BleScanCallBack;
 import cn.labelnet.bletooth.core.SimpleScanAndConnCallBack;
+import cn.labelnet.bletooth.data.filter.BleBluetoothGattStatus;
+import cn.labelnet.bletooth.data.filter.BleBluetoothUUIDFilter;
 import cn.labelnet.bletooth.util.LogUtil;
 
 public class BleToothActivity extends AppCompatActivity {
@@ -27,7 +30,8 @@ public class BleToothActivity extends AppCompatActivity {
     private TextView tv;
 
     private static BleTooth bleTooth;
-    private BleScanCallBack scanCallBack;
+    private ScanCallBack scanCallBack;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +62,13 @@ public class BleToothActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // conn start
+                BleDevice bleDevices = scanCallBack.getBleDevices();
+                if (bleDevices == null) {
+                    LogUtil.v("BleDevice Is NULL");
+                    return;
+                }
+                bleTooth.connect(bleDevices, false, new ConnCallBack());
+
             }
         });
 
@@ -65,6 +76,7 @@ public class BleToothActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // conn stop
+                bleTooth.disconnect();
             }
         });
 
@@ -95,9 +107,19 @@ public class BleToothActivity extends AppCompatActivity {
             super(timeoutmills);
         }
 
+        List<BleDevice> bleDevices;
+
+        public BleDevice getBleDevices() {
+            if (bleDevices == null || bleDevices.size() == 0) {
+                return null;
+            }
+            return bleDevices.get(0);
+        }
+
         @Override
         public void onScanDevicesData(List<BleDevice> bleDevices) {
             LogUtil.v("onScanDevicesData : " + bleDevices);
+            this.bleDevices = bleDevices;
         }
 
         @Override
@@ -112,7 +134,7 @@ public class BleToothActivity extends AppCompatActivity {
     }
 
 
-    private static class ConnCallBack extends BleToothBleGattCallBack {
+    private static class ConnCallBack extends BleToothBleFilterGattCallBack {
 
         @Override
         public void setBleConnStatus(BleConnStatus status) {
@@ -123,15 +145,33 @@ public class BleToothActivity extends AppCompatActivity {
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
 //            printServices(gatt);
-            printServices(bleTooth.getBluetoothGatt());
-            LogUtil.e("---------------------------------------------------------");
+//            printServices(bleTooth.getBluetoothGatt());
+//            LogUtil.e("---------------------------------------------------------");
             printServices(gatt);
+        }
+
+        @Override
+        protected BleBluetoothUUIDFilter onFilterBluetoothGattService(BleBluetoothUUIDFilter.Builder builder) {
+            builder.startBuilderService()
+                    .addService("00001801-0000-1000-8000-00805f9b34fb")
+                    .endBuilderService();//must be endBuilderService!!!!
+            return builder.build();
+        }
+
+        @Override
+        protected void onFilterBluetoothGattResult(List<BleService> bleServices) {
+            LogUtil.v("=================" + bleServices);
         }
 
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             super.onCharacteristicChanged(gatt, characteristic);
             LogUtil.v("onCharacteristicChanged 收到的数据 ： " + characteristic.getValue());
+        }
+
+        @Override
+        protected void onFilterBluetoothGattStatus(BleBluetoothGattStatus status, String msg) {
+            LogUtil.v("================: " + status + "msg : " + msg);
         }
 
         public static void printServices(BluetoothGatt gatt) {

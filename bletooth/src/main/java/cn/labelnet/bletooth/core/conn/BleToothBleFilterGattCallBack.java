@@ -1,18 +1,18 @@
-package cn.labelnet.bletooth.ble.conn;
+package cn.labelnet.bletooth.core.conn;
 
 import android.bluetooth.BluetoothGatt;
 
 import java.util.List;
 
 import cn.labelnet.bletooth.async.AsyncCenter;
-import cn.labelnet.bletooth.ble.bean.BleService;
-import cn.labelnet.bletooth.ble.bean.BleServiceUUID;
+import cn.labelnet.bletooth.core.bean.BleService;
+import cn.labelnet.bletooth.core.bean.BleServiceUUID;
 import cn.labelnet.bletooth.data.filter.BleBluetoothGattFilter;
 import cn.labelnet.bletooth.data.filter.BleBluetoothGattStatus;
 import cn.labelnet.bletooth.data.filter.BleBluetoothUUIDFilter;
 
 /**
- * @Package cn.labelnet.bletooth.ble.conn
+ * @Package cn.labelnet.bletooth.core.conn
  * <p>
  * @Author yuan
  * @Blog http://blog.csdn.net/lablenet

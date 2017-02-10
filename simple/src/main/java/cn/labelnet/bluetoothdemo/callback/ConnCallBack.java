@@ -8,8 +8,8 @@ import android.bluetooth.BluetoothGattService;
 
 import java.util.Arrays;
 
-import cn.labelnet.bletooth.ble.conn.BleConnStatus;
-import cn.labelnet.bletooth.ble.conn.BleToothBleGattCallBack;
+import cn.labelnet.bletooth.core.conn.BleConnStatus;
+import cn.labelnet.bletooth.core.conn.BleToothBleGattCallBack;
 import cn.labelnet.bletooth.util.LogUtil;
 
 public class ConnCallBack extends BleToothBleGattCallBack {

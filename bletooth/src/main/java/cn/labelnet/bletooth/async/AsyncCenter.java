@@ -3,8 +3,6 @@ package cn.labelnet.bletooth.async;
 import android.os.Handler;
 import android.os.HandlerThread;
 
-import cn.labelnet.bletooth.BleTooth;
-
 /**
  * @Package cn.labelnet.bletooth.async
  * <p>

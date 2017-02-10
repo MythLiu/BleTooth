@@ -6,7 +6,7 @@ import android.bluetooth.le.ScanSettings;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.labelnet.bletooth.ble.bean.BleDevice;
+import cn.labelnet.bletooth.core.bean.BleDevice;
 import cn.labelnet.bletooth.ble.scan.BleScanStatus;
 
 /**

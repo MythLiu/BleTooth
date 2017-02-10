@@ -2,7 +2,7 @@ package cn.labelnet.bletooth.core;
 
 import java.util.List;
 
-import cn.labelnet.bletooth.ble.bean.BleDevice;
+import cn.labelnet.bletooth.core.bean.BleDevice;
 import cn.labelnet.bletooth.ble.scan.BleScanResultCallback;
 import cn.labelnet.bletooth.ble.scan.BleScanStatus;
 

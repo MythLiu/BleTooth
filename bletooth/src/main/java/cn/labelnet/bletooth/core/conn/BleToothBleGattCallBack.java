@@ -1,4 +1,4 @@
-package cn.labelnet.bletooth.ble.conn;
+package cn.labelnet.bletooth.core.conn;
 
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
@@ -6,7 +6,7 @@ import android.bluetooth.BluetoothGattCallback;
 import cn.labelnet.bletooth.util.LogUtil;
 
 /**
- * @Package cn.labelnet.bletooth.ble.conn
+ * @Package cn.labelnet.bletooth.core.conn
  * <p>
  * @Author yuan
  * @Blog http://blog.csdn.net/lablenet

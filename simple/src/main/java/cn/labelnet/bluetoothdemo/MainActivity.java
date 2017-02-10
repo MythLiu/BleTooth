@@ -9,8 +9,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.labelnet.bletooth.ble.BleBlueTooth;
-import cn.labelnet.bletooth.ble.bean.BleDevice;
+import cn.labelnet.bletooth.ble.BleBlueToothTest;
+import cn.labelnet.bletooth.core.bean.BleDevice;
 import cn.labelnet.bletooth.ble.scan.BleScanResultCallback;
 import cn.labelnet.bletooth.ble.scan.BleScanStatus;
 import cn.labelnet.bletooth.core.BleScanFilter;
@@ -19,7 +19,7 @@ import cn.labelnet.bluetoothdemo.callback.ConnCallBack;
 
 public class MainActivity extends AppCompatActivity {
 
-    private BleBlueTooth bleTooth;
+    private BleBlueToothTest bleTooth;
     private ScanCallBack callBack;
     private static TextView textView;
 
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        bleTooth = new BleBlueTooth(getApplicationContext());
+        bleTooth = new BleBlueToothTest(getApplicationContext());
         callBack = new ScanCallBack(5000);
         textView = (TextView) findViewById(R.id.textView);
 

@@ -4,8 +4,8 @@ import android.bluetooth.BluetoothGatt;
 
 import java.util.List;
 
-import cn.labelnet.bletooth.ble.bean.BleService;
-import cn.labelnet.bletooth.ble.bean.BleServiceUUID;
+import cn.labelnet.bletooth.core.bean.BleService;
+import cn.labelnet.bletooth.core.bean.BleServiceUUID;
 
 /**
  * @Package cn.labelnet.bletooth.data

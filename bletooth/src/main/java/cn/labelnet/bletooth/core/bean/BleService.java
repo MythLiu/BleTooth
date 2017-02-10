@@ -1,11 +1,11 @@
-package cn.labelnet.bletooth.ble.bean;
+package cn.labelnet.bletooth.core.bean;
 
 import android.bluetooth.BluetoothGattService;
 
 import java.util.List;
 
 /**
- * @Package cn.labelnet.bletooth.ble.bean
+ * @Package cn.labelnet.bletooth.core.bean
  * <p>
  * @Author yuan
  * @Blog http://blog.csdn.net/lablenet

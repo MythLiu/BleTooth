@@ -3,8 +3,8 @@ package cn.labelnet.bletooth.data.filter;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.labelnet.bletooth.ble.bean.BleCharacteristicUUID;
-import cn.labelnet.bletooth.ble.bean.BleServiceUUID;
+import cn.labelnet.bletooth.core.bean.BleCharacteristicUUID;
+import cn.labelnet.bletooth.core.bean.BleServiceUUID;
 
 /**
  * @Package cn.labelnet.bletooth.data

@@ -29,4 +29,9 @@ public class BleDescriptor {
     public BluetoothGattDescriptor getDescriptor() {
         return descriptor;
     }
+
+    @Override
+    public String toString() {
+        return "{ \" DescUUID \" : \" " + UUID + " \" } ";
+    }
 }

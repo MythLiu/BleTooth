@@ -1,4 +1,4 @@
-package cn.labelnet.bletooth;
+package cn.labelnet.bletooth.core;
 
 import android.app.Service;
 import android.content.Intent;
@@ -14,7 +14,7 @@ import android.os.IBinder;
  * @Desc Desc
  * <p>
  * 中心设备进行操作蓝牙
- * 操作蓝牙
+ * (1)
  */
 
 public class BleToothService extends Service {

@@ -1,7 +1,6 @@
 package cn.labelnet.bletooth.ble.bean;
 
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
 
 import java.util.List;
 
@@ -20,9 +19,9 @@ public class BleCharacteristic {
 
     private String UUID;
     private BluetoothGattCharacteristic characteristic;
-    private List<BluetoothGattDescriptor> descriptors;
+    private List<BleDescriptor> descriptors;
 
-    public BleCharacteristic(String UUID, BluetoothGattCharacteristic characteristic, List<BluetoothGattDescriptor> descriptors) {
+    public BleCharacteristic(String UUID, BluetoothGattCharacteristic characteristic, List<BleDescriptor> descriptors) {
         this.UUID = UUID;
         this.characteristic = characteristic;
         this.descriptors = descriptors;
@@ -36,7 +35,7 @@ public class BleCharacteristic {
         return characteristic;
     }
 
-    public List<BluetoothGattDescriptor> getDescriptors() {
+    public List<BleDescriptor> getDescriptors() {
         return descriptors;
     }
 
@@ -53,6 +52,11 @@ public class BleCharacteristic {
     }
 
     @Override
+    public String toString() {
+        return "{ \"Descriptors\" ：" + descriptors + ", \"CharacteristicUUID\" : \" " + UUID + " \" } ";
+    }
+
+    @Override
     public int hashCode() {
         int result = UUID.hashCode();
         result = 31 * result + characteristic.hashCode();
@@ -66,7 +70,7 @@ public class BleCharacteristic {
     public static final class Builder {
         private String UUID;
         private BluetoothGattCharacteristic characteristic;
-        private List<BluetoothGattDescriptor> descriptors;
+        private List<BleDescriptor> descriptors;
 
         public Builder setUUID(String UUID) {
             this.UUID = UUID;
@@ -78,7 +82,7 @@ public class BleCharacteristic {
             return this;
         }
 
-        public Builder setDescriptors(List<BluetoothGattDescriptor> descriptors) {
+        public Builder setDescriptors(List<BleDescriptor> descriptors) {
             this.descriptors = descriptors;
             return this;
         }

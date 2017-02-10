@@ -1,6 +1,5 @@
 package cn.labelnet.bletooth.ble.bean;
 
-import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 
 import java.util.List;
@@ -21,9 +20,9 @@ public class BleService {
 
     private String UUID;
     private BluetoothGattService service;
-    private List<BluetoothGattCharacteristic> characteristics;
+    private List<BleCharacteristic> characteristics;
 
-    public BleService(String UUID, BluetoothGattService service, List<BluetoothGattCharacteristic> characteristics) {
+    public BleService(String UUID, BluetoothGattService service, List<BleCharacteristic> characteristics) {
         this.UUID = UUID;
         this.service = service;
         this.characteristics = characteristics;
@@ -37,7 +36,7 @@ public class BleService {
         return service;
     }
 
-    public List<BluetoothGattCharacteristic> getCharacteristics() {
+    public List<BleCharacteristic> getCharacteristics() {
         return characteristics;
     }
 
@@ -64,6 +63,11 @@ public class BleService {
         return new Builder();
     }
 
+    @Override
+    public String toString() {
+        return "{ \" Characteristics \" :" + characteristics + ", \"ServiceUUID \" : \" " + UUID + "\"}";
+    }
+
     /**
      * builder
      */
@@ -71,7 +75,7 @@ public class BleService {
 
         private String UUID;
         private BluetoothGattService service;
-        private List<BluetoothGattCharacteristic> characteristics;
+        private List<BleCharacteristic> characteristics;
 
         public Builder setUUID(String UUID) {
             this.UUID = UUID;
@@ -83,7 +87,7 @@ public class BleService {
             return this;
         }
 
-        public Builder setCharacteristics(List<BluetoothGattCharacteristic> characteristics) {
+        public Builder setCharacteristics(List<BleCharacteristic> characteristics) {
             this.characteristics = characteristics;
             return this;
         }

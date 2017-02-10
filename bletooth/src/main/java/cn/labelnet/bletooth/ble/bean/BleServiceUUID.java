@@ -41,9 +41,6 @@ public class BleServiceUUID {
 
     @Override
     public String toString() {
-        return "{" +
-                " 'ServiceUUID' : " + serviceUUID +
-                ", 'CharacteristicUUIDs' : " + bleCharacteristicUUIDs +
-                '}';
+        return "{ \"ServiceUUID\" : " + serviceUUID + ", \"CharacteristicUUIDs\" : " + bleCharacteristicUUIDs + "}";
     }
 }

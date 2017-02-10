@@ -6,8 +6,8 @@ import android.bluetooth.le.ScanSettings;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.labelnet.bletooth.core.bean.BleDevice;
 import cn.labelnet.bletooth.ble.scan.BleScanStatus;
+import cn.labelnet.bletooth.core.bean.BleDevice;
 
 /**
  * @Package cn.labelnet.bletooth.core
@@ -79,10 +79,14 @@ public abstract class BleScanCallBack {
      *
      * @return BleScanFilter list
      */
-    public List<BleScanFilter> getScanFilter() {
+    public List<BleScanFilter> onScanFilter() {
         List<BleScanFilter> filters = new ArrayList<>();
         //new BleScanFilter.Builder().setDeviceName().build()
         return filters;
+    }
+
+    public List<BleScanFilter> getScanFilter() {
+        return onScanFilter();
     }
 
     /**
@@ -94,7 +98,7 @@ public abstract class BleScanCallBack {
 
         List<ScanFilter> scanFilters = new ArrayList<>();
 
-        List<BleScanFilter> bleScanFilters = getScanFilter();
+        List<BleScanFilter> bleScanFilters = onScanFilter();
 
         if (bleScanFilters == null || bleScanFilters.size() == 0) {
             return scanFilters;

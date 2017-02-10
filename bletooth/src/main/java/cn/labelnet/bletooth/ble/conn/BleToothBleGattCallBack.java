@@ -51,12 +51,20 @@ public abstract class BleToothBleGattCallBack extends BluetoothGattCallback {
     public void onServicesDiscovered(BluetoothGatt gatt, int status) {
         if (status == BluetoothGatt.GATT_SUCCESS) {
             setBleConnStatus(BleConnStatus.gatt_success);
+            initFilterGatt(gatt);
         } else {
             setBleConnStatus(BleConnStatus.gatt_fail);
         }
     }
 
     public abstract void setBleConnStatus(BleConnStatus status);
+
+    /**
+     * 过滤有效的 Gatt Service
+     * @param gatt
+     */
+    protected void initFilterGatt(BluetoothGatt gatt) {
+    }
 
     //conn listener
     public interface OnConnStatusListener {

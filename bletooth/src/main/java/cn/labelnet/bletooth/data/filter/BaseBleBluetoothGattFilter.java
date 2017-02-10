@@ -63,8 +63,6 @@ public abstract class BaseBleBluetoothGattFilter implements Runnable {
         List<BluetoothGattService> services = gatt.getServices();
         List<BleServiceUUID> serviceUUIDs = getBleFilterUUID();
 
-        LogUtil.v("++ : "+serviceUUIDs);
-
         if (services == null || services.size() == 0) {
             String DeviceInfo = gatt.getDevice().getName() + " : " + gatt.getDevice().getAddress();
             onBleDataStatus(BleBluetoothGattStatus.NotAllService, "Device　：" + DeviceInfo + " NotAllService");

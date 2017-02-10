@@ -20,7 +20,7 @@ public class SimpleBleToothBleFilterGattCallback extends BleToothBleFilterGattCa
                 .addService("f000c0e0-0451-4000-b000-000000000000")
                 .addCharacteristic("f000c0e1-0451-4000-b000-000000000000", "00002902-0000-1000-8000-00805f9b34fb", "00002901-0000-1000-8000-00805f9b34fb")
                 .addCharacteristic("f000c0e2-0451-4000-b000-000000000000", "00002901-0000-1000-8000-00805f9b34fb")
-                .endBuilderService();
+                .endBuilderService(); //must be endBuilderService!!!!
         return builder.build();
     }
 

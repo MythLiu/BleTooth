@@ -46,9 +46,9 @@ public abstract class BleToothBleFilterGattCallBack extends BleToothBleGattCallB
     }
 
     @Override
-    public List<BleServiceUUID> getBleFilterUUID() {
+    public BleBluetoothUUIDFilter getBleFilterUUID() {
         BleBluetoothUUIDFilter.Builder builder = new BleBluetoothUUIDFilter.Builder();
-        return onFilterBluetoothGattService(builder).getBleServiceUUIDs();
+        return onFilterBluetoothGattService(builder);
     }
 
     /**

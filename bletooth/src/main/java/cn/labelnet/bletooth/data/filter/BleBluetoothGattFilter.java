@@ -39,7 +39,7 @@ public class BleBluetoothGattFilter extends BaseBleBluetoothGattFilter {
 
     @Override
     protected List<BleServiceUUID> getBleFilterUUID() {
-        return onDataCenterListener.getBleFilterUUID();
+        return onDataCenterListener.getBleFilterUUID().getBleServiceUUIDs();
     }
 
     public interface OnDataCenterListener {
@@ -51,7 +51,7 @@ public class BleBluetoothGattFilter extends BaseBleBluetoothGattFilter {
         void onBleDataStatus(BleBluetoothGattStatus status, String msg);
 
         //filter UUID
-        List<BleServiceUUID> getBleFilterUUID();
+        BleBluetoothUUIDFilter getBleFilterUUID();
     }
 
 }

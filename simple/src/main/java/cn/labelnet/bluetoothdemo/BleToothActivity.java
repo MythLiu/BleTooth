@@ -118,6 +118,23 @@ public class BleToothActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.btn_ble_read_rssi).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //read rssi
+                bleTooth.readRemoteRSSI();
+            }
+        });
+
+        findViewById(R.id.btn_ble_read_chara).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<BleCharacteristic> characteristics = getBleCharacteristics();
+                if (characteristics == null) return;
+                bleTooth.readCharacteristic(characteristics.get(0).getCharacteristic());
+            }
+        });
+
     }
 
     private void notification() {
@@ -235,6 +252,17 @@ public class BleToothActivity extends AppCompatActivity {
         @Override
         protected void onFilterBluetoothGattResult(List<BleService> bleServices) {
             LogUtil.v("=================" + bleServices);
+        }
+
+        @Override
+        public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
+            LogUtil.v("onReadRemoteRssi() : rssi " + rssi);
+        }
+
+        @Override
+        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            super.onCharacteristicRead(gatt, characteristic, status);
+            LogUtil.v("onCharacteristicRead() " + Arrays.toString(characteristic.getValue()));
         }
 
         @Override

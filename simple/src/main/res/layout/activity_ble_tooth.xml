@@ -58,18 +58,18 @@
         android:id="@+id/btn_ble_chara_enable_notify"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Enable Chara Notify" />
+        android:text="TEST_NOTIFICATION" />
 
     <Button
-        android:id="@+id/btn_ble_chara_disnable_notify"
+        android:id="@+id/btn_ble_read_rssi"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="DISable Chara Notify" />
+        android:text="Read RSSI" />
 
     <Button
-        android:id="@+id/btn_ble_write_desc"
+        android:id="@+id/btn_ble_read_chara"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="WRITE_DESCRIPTOR" />
+        android:text="Read_CHARACTERISTIC" />
 
 </LinearLayout>

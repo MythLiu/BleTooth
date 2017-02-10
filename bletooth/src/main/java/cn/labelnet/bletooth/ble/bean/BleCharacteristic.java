@@ -53,7 +53,8 @@ public class BleCharacteristic {
 
     @Override
     public String toString() {
-        return "{ \"Descriptors\" ：" + descriptors + ", \"CharacteristicUUID\" : \" " + UUID + " \" } ";
+        String descStr = (descriptors == null || descriptors.isEmpty() || descriptors.size() == 0) ? "[]" : descriptors.toString();
+        return "{\"CharacteristicUUID\":\"" + UUID + "\",\"Descriptors\":" + descStr + "}";
     }
 
     @Override

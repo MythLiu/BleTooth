@@ -65,7 +65,8 @@ public class BleService {
 
     @Override
     public String toString() {
-        return "{ \" Characteristics \" :" + characteristics + ", \"ServiceUUID \" : \" " + UUID + "\"}";
+        String characts = (characteristics == null || characteristics.isEmpty() || characteristics.size() == 0) ? "[]" : characteristics.toString();
+        return "{ \"ServiceUUID\":\"" + UUID + "\" , \"Characteristics\":" + characts + " }";
     }
 
     /**

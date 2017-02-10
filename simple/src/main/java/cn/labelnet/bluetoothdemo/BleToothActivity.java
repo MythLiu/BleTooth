@@ -9,17 +9,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import cn.labelnet.bletooth.BleTooth;
+import cn.labelnet.bletooth.ble.scan.BleScanStatus;
+import cn.labelnet.bletooth.core.BleGattCallback;
+import cn.labelnet.bletooth.core.BleScanCallBack;
+import cn.labelnet.bletooth.core.BleScanFilter;
+import cn.labelnet.bletooth.core.SimpleScanAndConnCallBack;
 import cn.labelnet.bletooth.core.bean.BleDevice;
 import cn.labelnet.bletooth.core.bean.BleService;
 import cn.labelnet.bletooth.core.conn.BleConnStatus;
-import cn.labelnet.bletooth.core.conn.BleToothBleFilterGattCallBack;
-import cn.labelnet.bletooth.ble.scan.BleScanStatus;
-import cn.labelnet.bletooth.core.BleScanCallBack;
-import cn.labelnet.bletooth.core.SimpleScanAndConnCallBack;
 import cn.labelnet.bletooth.data.filter.BleBluetoothGattStatus;
 import cn.labelnet.bletooth.data.filter.BleBluetoothUUIDFilter;
 import cn.labelnet.bletooth.util.LogUtil;
@@ -123,6 +125,13 @@ public class BleToothActivity extends AppCompatActivity {
         }
 
         @Override
+        public List<BleScanFilter> onScanFilter() {
+            List<BleScanFilter> bleScanFilters = new ArrayList<>();
+            bleScanFilters.add(new BleScanFilter.Builder().setDeviceName("小米手机").build());
+            return bleScanFilters;
+        }
+
+        @Override
         public void onScanProcess(float process) {
             LogUtil.v("onScanProcess : " + process);
         }
@@ -134,7 +143,7 @@ public class BleToothActivity extends AppCompatActivity {
     }
 
 
-    private static class ConnCallBack extends BleToothBleFilterGattCallBack {
+    private static class ConnCallBack extends BleGattCallback {
 
         @Override
         public void setBleConnStatus(BleConnStatus status) {

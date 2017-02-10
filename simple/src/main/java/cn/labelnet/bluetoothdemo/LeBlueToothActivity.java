@@ -12,8 +12,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.labelnet.bletooth.ble.bean.BleDevice;
-import cn.labelnet.bletooth.le.LeBlueTooth;
+import cn.labelnet.bletooth.core.bean.BleDevice;
+import cn.labelnet.bletooth.le.LeBlueToothTest;
 import cn.labelnet.bletooth.le.scan.LeScanResultCallBack;
 import cn.labelnet.bletooth.util.LogUtil;
 import cn.labelnet.bluetoothdemo.callback.ConnCallBack;
@@ -22,7 +22,7 @@ public class LeBlueToothActivity extends AppCompatActivity {
 
 
     private static TextView tv;
-    private LeBlueTooth leBlueTooth;
+    private LeBlueToothTest leBlueTooth;
     private LeScanSimpleCallBack leScanSimpleCallBack;
 
     @Override
@@ -30,7 +30,7 @@ public class LeBlueToothActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_le_blue_tooth);
 
-        leBlueTooth = new LeBlueTooth(getApplicationContext());
+        leBlueTooth = new LeBlueToothTest(getApplicationContext());
         leScanSimpleCallBack = new LeScanSimpleCallBack(5000);
         tv = (TextView) findViewById(R.id.tv_data);
 

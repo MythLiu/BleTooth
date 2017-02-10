@@ -321,7 +321,6 @@ public class LeBlueToothTest implements BleToothLeScanCallBack.OnScanCompleteLis
         //Read : Add data Characteristic
         BluetoothGattCharacteristic characteristicDataRead = new BluetoothGattCharacteristic(TestUUID.UUID_MOV_DATA, BluetoothGattCharacteristic.PROPERTY_READ, BluetoothGattCharacteristic.PERMISSION_READ);
         BluetoothGattDescriptor descriptor = new BluetoothGattDescriptor(TestUUID.UUID_MOV__DESCRIPTOR, BluetoothGattCharacteristic.PERMISSION_WRITE);
-        descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);//设置开启通知
         characteristicDataRead.addDescriptor(descriptor);
         service.addCharacteristic(characteristicDataRead);
 
@@ -331,8 +330,6 @@ public class LeBlueToothTest implements BleToothLeScanCallBack.OnScanCompleteLis
                         BluetoothGattCharacteristic.PROPERTY_READ |
                         BluetoothGattCharacteristic.PROPERTY_NOTIFY,
                 BluetoothGattCharacteristic.PERMISSION_WRITE);
-        byte b[] = new byte[]{0x7F, 0x00};
-        characteristicConfWrite.setValue(b);
         service.addCharacteristic(characteristicConfWrite);
 
         //Period

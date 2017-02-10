@@ -48,6 +48,16 @@
         android:layout_height="wrap_content"
         android:id="@+id/btn_ble_scan_conn" />
 
+    <Button
+        android:id="@+id/btn_ble_write_chara"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="WRITE_CHARACTERISTIC" />
 
+    <Button
+        android:id="@+id/btn_ble_write_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="WRITE_DESCRIPTOR" />
 
 </LinearLayout>

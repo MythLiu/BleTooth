@@ -32,7 +32,8 @@
 
      上面描述的扫描、连接、操作 三个均在BleTooth 进行总控制实现，通过 `BleTooth.getInstance(getApplicationContext())` 获取BleTooth对象，
    这里注意使用Application 的 Context!
-    * **Example :** simple 工程 BleToothActivity 类实现
+
+    **Example :** simple 工程 BleToothActivity 类实现
 
  2. Android Application + Service + BleTooth 开发
 
@@ -46,6 +47,7 @@
     *  SimpleServiceBleApplication 实现 （可以直接继承使用）
 
  3. Android Application + BleTooth 开发
+
     直接在Application进行BleTooth 配置初始化方法，BleGattCallBack 可以单独写成类，并通过广播就行数据发送，
     继承 BaseBleToothApplication即可。
     * BaseBleToothApplication 初始化 Ble , 简单操作方法 ；

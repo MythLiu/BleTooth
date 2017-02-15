@@ -31,9 +31,13 @@ import cn.labelnet.bletooth.util.LogUtil;
  * @Blog http://blog.csdn.net/lablenet
  * <p>
  * @Date Created in 3:27 PM 2/5/2017
- * @Desc BleTooth
+ *
  * (1) 只允许一个BluetoothGattCallback
  * (2)
+ *
+ * 4.3
+ * Test : scan , conn
+ *
  */
 
 public class BleBlueToothTest implements BleToothBleScanCallback.OnScanCompleteListener

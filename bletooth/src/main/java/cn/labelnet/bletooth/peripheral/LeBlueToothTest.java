@@ -43,6 +43,9 @@ import cn.labelnet.bletooth.util.LogUtil;
  * <p>
  * @Date Created in 9:51 AM 2/6/2017
  * @Desc Desc
+ *
+ * 5.0 :
+ * Test : scan , conn , peripheral
  */
 
 public class LeBlueToothTest implements BleToothLeScanCallBack.OnScanCompleteListener

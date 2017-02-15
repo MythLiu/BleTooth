@@ -10,6 +10,7 @@ import android.bluetooth.le.AdvertiseData;
  * <p>
  * @Date Created in 5:47 PM 2/15/2017
  * @Desc Desc
+ * Example :
  */
 
 public class AdData extends BaseAdData {

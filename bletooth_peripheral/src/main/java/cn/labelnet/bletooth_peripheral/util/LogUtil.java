@@ -20,7 +20,7 @@ import org.json.JSONObject;
 public class LogUtil {
 
     private static boolean IS_SHOW_LOG = true;
-    private static String TAG = "Util";
+    private static String TAG = "BlePeripheral";
 
     private static final String DEFAULT_MESSAGE = "execute";
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");

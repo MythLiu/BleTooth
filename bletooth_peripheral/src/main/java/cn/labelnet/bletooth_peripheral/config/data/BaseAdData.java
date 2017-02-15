@@ -30,7 +30,7 @@ public abstract class BaseAdData {
     private boolean isShowTxPowerLevel = false;
 
 
-    protected AdvertiseData build() {
+    public AdvertiseData build() {
         AdvertiseData.Builder builder = new AdvertiseData.Builder();
         builder.setIncludeDeviceName(getIsShowDeviceName());
         builder.setIncludeTxPowerLevel(getIsShowTxPowerLevel());

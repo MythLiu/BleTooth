@@ -33,7 +33,7 @@ public abstract class BaseAdSettings {
      */
     private AdvertiseSettings mAdvertiseSettings;
 
-    protected AdvertiseSettings build() {
+    public AdvertiseSettings build() {
         AdvertiseSettings.Builder builder = new AdvertiseSettings.Builder();
         builder.setAdvertiseMode(getAdPowerMode());
         builder.setTxPowerLevel(getAdTxPowerMode());

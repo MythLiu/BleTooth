@@ -27,11 +27,14 @@ public abstract class BaseBleToothApplication extends Application {
     protected BleTooth mBleTooth;
     private BleGattCallback mBleGattCallback;
 
+    public BleTooth getBleTooth() {
+        return mBleTooth;
+    }
 
     /**
      * init ble
      */
-    protected void initBleTooth() {
+    public void initBleTooth() {
         mBleTooth = BleTooth.getInstance(getApplicationContext());
         mBleGattCallback = getBleGattCallback();
     }

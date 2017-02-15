@@ -17,6 +17,10 @@ import cn.labelnet.bletooth.core.BaseBleToothService;
  * <p>
  * @Date Created in 9:06 PM 2/10/2017
  * @Desc Desc
+ * init BleService
+ * example :
+ * @see SimpleBleToothService
+ * @see BaseBleToothService
  */
 
 public class SimpleServiceBleApplication extends Application {

@@ -21,6 +21,10 @@ import cn.labelnet.bletooth.core.bean.BleDevice;
  * use service init
  * (1)initBind
  * (2)initService
+ *
+ * example :
+ * @see cn.labelnet.bletooth.core.simple.SimpleBleToothService
+ * @see cn.labelnet.bletooth.core.simple.SimpleServiceBleApplication
  */
 
 public abstract class BaseBleToothService extends Service {

@@ -18,6 +18,7 @@ import cn.labelnet.bletooth.core.bean.BleDevice;
  * @Desc Desc
  * <p>
  * 中心设备进行操作蓝牙
+ * use service init
  * (1)initBind
  * (2)initService
  */

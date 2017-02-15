@@ -19,7 +19,7 @@ import cn.labelnet.bletooth.core.BaseBleToothService;
  * @Desc Desc
  */
 
-public class SimpleBleApplication extends Application {
+public class SimpleServiceBleApplication extends Application {
 
     private BaseBleToothService.LocalBinder localBinder;
     protected static BaseBleToothService mBleToothService;
